@@ -1,0 +1,9 @@
+{
+	"name":"SegmentRunner",
+	"version":"0.0.1",
+	"author":"Jake Callery <jake@subvoicestudios.com>",
+	"description":"SegmentRunner",
+	"dependencies": {
+		"requirejs" :"*"
+	}
+}
