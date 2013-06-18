@@ -31,7 +31,6 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 	        this.gameContext = $gameCanvas.getContext('2d');
 	        this.gameWidth = $gameWidth;
 	        this.gameHeight = $gameHeight;
-			this.renderEngine = new RenderEngine(this.gameCanvas,this.gameWidth,this.gameHeight);
 
 	        this.updateId = -1;
 	        this.stats = new Stats();
@@ -40,6 +39,7 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 
 	        this.ground = new Ground(5,this.gameWidth, this.gameHeight);
 	        this.inputManager = new InputManager(this.doc, this.ground.groundModel, 60);
+	        this.renderEngine = new RenderEngine(this.gameCanvas,this.ground.groundModel,this.gameWidth,this.gameHeight);
 
 	        this.updateDelegate = EventUtils.bind(self, self.update);
 

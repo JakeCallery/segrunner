@@ -8,8 +8,9 @@ define([
 'jac/utils/ObjUtils',
 'jac/logger/Logger',
 'jac/pool/Pool',
-'app/ground/GroundVec'],
-function(EventDispatcher,ObjUtils,L,Pool,GroundVec){
+'app/ground/GroundVec',
+'jac/math/Vec2D'],
+function(EventDispatcher,ObjUtils,L,Pool,GroundVec,Vec2D){
     return (function(){
         /**
          * Creates a GroundModel object
@@ -25,6 +26,11 @@ function(EventDispatcher,ObjUtils,L,Pool,GroundVec){
 	        this.vecPool = new Pool(GroundVec);
 	        this.vecList = [];
 
+	        this.addNextPoint(100,this.gameHeight-100);
+	        this.addNextPoint(200,this.gameHeight-100);
+	        this.addNextPoint(300,this.gameHeight-100);
+	        this.addNextPoint(400,this.gameHeight-100);
+
         }
         
         //Inherit / Extend
@@ -37,10 +43,11 @@ function(EventDispatcher,ObjUtils,L,Pool,GroundVec){
 			    prevVec = this.vecList[this.vecList.length-1];
 		    } else {
 			    prevVec = new GroundVec();
-			    prevVec.init(0,0,0,this.gameHeight);
+			    prevVec.init(0,0,0,this.gameHeight-100);
 		    }
 
-		    var vec = this.vecPool.getObject($x,$y,prevVec.x,prevVec.y);
+		    var vec = this.vecPool.getObject(0,0,0,0);
+		    Vec2D.vecFromLineSeg(vec, prevVec.x+prevVec.xOffset, prevVec.y+prevVec.yOffset, $x, $y);
 		    this.vecList.push(vec);
 
 		    L.log('Added new point: ' + this.vecList.length, '@ground');
