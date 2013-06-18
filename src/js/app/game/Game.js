@@ -9,8 +9,10 @@ define([
 'stats',
 'jac/utils/EventUtils',
 'app/render/RenderEngine',
-'jac/logger/Logger'],
-function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L){
+'jac/logger/Logger',
+'app/ground/Ground',
+'app/input/InputManager'],
+function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputManager){
     return (function(){
         /**
          * Creates a Game object
@@ -36,6 +38,9 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L){
 	        this.stats.setMode(0);
 	        this.doc.getElementById('statsDiv').appendChild(this.stats.domElement);
 
+	        this.ground = new Ground(5,this.gameWidth, this.gameHeight);
+	        this.inputManager = new InputManager(this.doc, this.ground.groundModel, 60);
+
 	        this.updateDelegate = EventUtils.bind(self, self.update);
 
         }
@@ -51,6 +56,8 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L){
 			    this.updateId = this.window.requestAnimationFrame(self.updateDelegate);
 		    }
 
+		    this.inputManager.update(1);
+		    this.ground.update(1);
 		    this.renderEngine.renderFrame();
 
 		    this.stats.update();
