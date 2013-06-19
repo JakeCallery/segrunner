@@ -53,7 +53,7 @@ function(EventDispatcher,ObjUtils,L,Pool,GroundVec,Vec2D,Point){
 		    Vec2D.vecFromLineSeg(vec, prevVec.x+prevVec.xOffset, prevVec.y+prevVec.yOffset, $x, $y);
 		    this.vecList.push(vec);
 
-		    L.log('Added new point: ' + this.vecList.length, '@ground');
+		    //L.log('Added new point: ' + this.vecList.length, '@ground');
 	    };
 
 	    GroundModel.prototype.shiftOldPoint = function(){

@@ -28,7 +28,8 @@ function(EventDispatcher,ObjUtils,L,EventUtils,BrowserUtils){
 	        this.ticksPerInput = $ticksPerInput;
 	        this.tickCount = 0;
 
-			EventUtils.addDomListener(this.window, 'mousemove', EventUtils.bind(self, self.handleMouseMove));
+			//EventUtils.addDomListener(this.window, 'mousemove', EventUtils.bind(self, self.handleMouseMove));
+	        this.window.onmousemove = EventUtils.bind(self, self.handleMouseMove);
 
         }
         
@@ -39,7 +40,7 @@ function(EventDispatcher,ObjUtils,L,EventUtils,BrowserUtils){
 			this.tickCount += $tickDelta;
 
 		    if(this.tickCount >= this.ticksPerInput){
-			    L.log('InputManager count reset', '@input');
+			   // L.log('InputManager count reset', '@input');
 
 				this.groundModel.addNextPoint(this.groundModel.activePoint.x, this.groundModel.activePoint.y);
 

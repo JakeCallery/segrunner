@@ -45,13 +45,13 @@ function(EventDispatcher,ObjUtils,FootPoint){
 			var vec = null;
 
 		    //TODO: Refactor this, not very DRY (get it all into 1 loop?)
-
 		    //Right point
 			for(i = this.groundModel.vecList.length-1; i >= 0; --i){
 				vec = this.groundModel.vecList[i];
 				if(pt.x >= vec.xOffset && pt.x <= (vec.xOffset + vec.x)){
-					//TODO: Start here
 					//Calc the new 'y' position for the 'foot'
+					this.rightPoint.y = vec.getYOnSegment(this.rightPoint.x);
+					break;
 				}
 			}
 
@@ -60,7 +60,16 @@ function(EventDispatcher,ObjUtils,FootPoint){
 		    for(; i >= 0; --i){
 			    vec = this.groundModel.vecList[i];
 			    if(pt.x >= vec.xOffset && pt.x <= (vec.xOffset + vec.x)){
+
+				    if(this.leftPoint.lastGroundVec !== null && this.leftPoint.lastGroundVec !== vec){
+					    this.leftPoint.lastGroundVec.hasBeenLeft = true;
+				    }
+
+				    this.leftPoint.lastGroundVec = vec;
+
 				    //Calc the new 'y' position for the 'foot'
+				    this.leftPoint.y = vec.getYOnSegment(this.leftPoint.x);
+				    break;
 			    }
 		    }
 

@@ -40,8 +40,9 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 
 	        this.ground = new Ground(50,this.gameWidth, this.gameHeight);
 	        this.inputManager = new InputManager(this.window, this.doc, this.ground.groundModel, 60);
-	        this.renderEngine = new RenderEngine(this.gameCanvas,this.ground.groundModel,this.gameWidth,this.gameHeight);
 			this.runner = new Runner(this.ground.groundModel);
+	        this.renderEngine = new RenderEngine(this.gameCanvas,this.ground.groundModel,this.runner);
+	        this.runner.moveTo(400,100);
 
 	        this.updateDelegate = EventUtils.bind(self, self.update);
 

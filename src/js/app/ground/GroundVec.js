@@ -17,12 +17,19 @@ function(Vec2DObj,ObjUtils){
             Vec2DObj.call(this,0,0,0,0);
 
 	        this.hasBeenLeft = false;   //set this to true when the left point of the character has moved past this segment
-
         }
         
         //Inherit / Extend
         ObjUtils.inheritPrototype(GroundVec,Vec2DObj);
 
+	    GroundVec.prototype.getYOnSegment = function($x){
+		    //y = (slope*x)+b
+		    var slope = this.y/this.x;
+		    var b = (this.y + this.yOffset) - (slope * (this.x+this.xOffset));
+		    return (slope * $x) + b;
+	    };
+
+	    //// IPoolable ////
 	    GroundVec.prototype.init = function($args){
 			this.x = arguments[0];
 		    this.y = arguments[1];

@@ -11,15 +11,16 @@ function(EventDispatcher,ObjUtils){
          * @extends {EventDispatcher}
          * @constructor
          */
-        function RenderEngine($gameCanvas,$groundModel,$gameWidth,$gameHeight){
+        function RenderEngine($gameCanvas,$groundModel,$runner){
             //super
             EventDispatcher.call(this);
 
+	        this.runner = $runner;
 	        this.gameCanvas = $gameCanvas;
 	        this.groundModel = $groundModel;
 	        this.gameCtx = this.gameCanvas.getContext('2d');
-	        this.gameWidth = $gameWidth;
-	        this.gameHeight = $gameHeight;
+	        this.gameWidth = $groundModel.gameWidth;
+	        this.gameHeight = $groundModel.gameHeight;
         }
         
         //Inherit / Extend
@@ -61,6 +62,21 @@ function(EventDispatcher,ObjUtils){
 		    this.gameCtx.arc(this.groundModel.activePoint.x, this.groundModel.activePoint.y, 8, 0, 2*Math.PI, false);
 		    this.gameCtx.stroke();
 		    this.gameCtx.closePath();
+
+		    //Render Runner (in this case, just put the render call in the runner, since there is only one of them)
+		    //TMP
+		    this.gameCtx.beginPath();
+		    this.gameCtx.strokeStyle = '#FFFF00';
+		    this.gameCtx.arc(this.runner.leftPoint.x, this.runner.leftPoint.y, 3, 0, 2*Math.PI, false);
+		    this.gameCtx.stroke();
+		    this.gameCtx.closePath();
+
+		    this.gameCtx.beginPath();
+		    this.gameCtx.strokeStyle = '#FFFF00';
+		    this.gameCtx.arc(this.runner.rightPoint.x, this.runner.rightPoint.y, 3, 0, 2*Math.PI, false);
+		    this.gameCtx.stroke();
+		    this.gameCtx.closePath();
+		    ////////////////////////////
 
 	    };
 
