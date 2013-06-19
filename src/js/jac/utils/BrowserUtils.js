@@ -35,6 +35,30 @@ function(){
 		    return paramList;
 	    };
 
+	    /**
+	     * Returns the window size and location
+	     * @param {window} [$window = window]
+	     * @param {document} [$document = document]
+	     * @returns {{x: Number, y: Number, width: Number, height: Number}}
+	     */
+	    BrowserUtils.getViewportSize = function($window,$document){
+		    var win = $window || window;
+			var doc = $document || document;
+
+		    var e = win;
+		    var a = 'inner';
+		    if ( !( 'innerWidth' in e ) )
+		    {
+			    a = 'client';
+			    e = doc.documentElement || doc.body;
+		    }
+
+		    var xPos = ('screenLeft' in win)?win.screenLeft:win.screenX;
+		    var yPos = ('screenTop' in win)?win.screenTop:win.screenY;
+
+		    return { x:xPos, y:yPos, width : e[ a+'Width' ] , height : e[ a+'Height' ] }
+	    };
+
         //Return constructor
         return BrowserUtils;
     })();

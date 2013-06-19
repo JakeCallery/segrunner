@@ -27,6 +27,7 @@ function(EventDispatcher,ObjUtils){
 
 	    RenderEngine.prototype.renderFrame = function(){
 
+		    //overwrite canvas with black
 		    this.gameCtx.beginPath();
 		    this.gameCtx.fillStyle = '#000000';
 		    this.gameCtx.fillRect(0,0,this.gameWidth,this.gameHeight);
@@ -34,6 +35,7 @@ function(EventDispatcher,ObjUtils){
 		    this.gameCtx.closePath();
 
 
+		    //Render segments
 			//TMP
 			for(var i = 0, l = this.groundModel.vecList.length; i < l; i++){
 				var vec = this.groundModel.vecList[i];
@@ -52,6 +54,13 @@ function(EventDispatcher,ObjUtils){
 				this.gameCtx.closePath();
 			}
 		    //////////////////////////////////////
+
+		    //Render active point
+		    this.gameCtx.beginPath();
+		    this.gameCtx.strokeStyle = '#0000FF';
+		    this.gameCtx.arc(this.groundModel.activePoint.x, this.groundModel.activePoint.y, 8, 0, 2*Math.PI, false);
+		    this.gameCtx.stroke();
+		    this.gameCtx.closePath();
 
 	    };
 

@@ -9,8 +9,9 @@ define([
 'jac/logger/Logger',
 'jac/pool/Pool',
 'app/ground/GroundVec',
-'jac/math/Vec2D'],
-function(EventDispatcher,ObjUtils,L,Pool,GroundVec,Vec2D){
+'jac/math/Vec2D',
+'jac/math/Point'],
+function(EventDispatcher,ObjUtils,L,Pool,GroundVec,Vec2D,Point){
     return (function(){
         /**
          * Creates a GroundModel object
@@ -25,6 +26,8 @@ function(EventDispatcher,ObjUtils,L,Pool,GroundVec,Vec2D){
 	        this.gameHeight = $gameHeight;
 	        this.vecPool = new Pool(GroundVec);
 	        this.vecList = [];
+
+	        this.activePoint = new Point(0,0);
 
 	        this.addNextPoint(100,this.gameHeight-100);
 	        this.addNextPoint(200,this.gameHeight-100);
