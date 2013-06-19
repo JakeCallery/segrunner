@@ -11,8 +11,9 @@ define([
 'app/render/RenderEngine',
 'jac/logger/Logger',
 'app/ground/Ground',
-'app/input/InputManager'],
-function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputManager){
+'app/input/InputManager',
+'app/runner/Runner'],
+function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputManager,Runner){
     return (function(){
         /**
          * Creates a Game object
@@ -40,6 +41,7 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 	        this.ground = new Ground(50,this.gameWidth, this.gameHeight);
 	        this.inputManager = new InputManager(this.window, this.doc, this.ground.groundModel, 60);
 	        this.renderEngine = new RenderEngine(this.gameCanvas,this.ground.groundModel,this.gameWidth,this.gameHeight);
+			this.runner = new Runner(this.ground.groundModel);
 
 	        this.updateDelegate = EventUtils.bind(self, self.update);
 
@@ -58,6 +60,7 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 
 		    this.inputManager.update(1);
 		    this.ground.update(1);
+		    this.runner.update(1);
 		    this.renderEngine.renderFrame();
 
 		    this.stats.update();

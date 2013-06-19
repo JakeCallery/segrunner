@@ -8,6 +8,8 @@ function(){
     return (function(){
         /**
          * Creates a Point object
+         * @param {Number} [$x=0]
+         * @param {Number} [$y=0]
          * @constructor
          */
         function Point($x,$y){

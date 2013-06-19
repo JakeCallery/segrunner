@@ -15,6 +15,9 @@ function(Vec2DObj,ObjUtils){
         function GroundVec(){
             //super
             Vec2DObj.call(this,0,0,0,0);
+
+	        this.hasBeenLeft = false;   //set this to true when the left point of the character has moved past this segment
+
         }
         
         //Inherit / Extend
