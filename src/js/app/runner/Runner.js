@@ -73,6 +73,9 @@ function(EventDispatcher,ObjUtils,FootPoint){
 			    }
 		    }
 
+		    //TODO: START HERE:
+		    //At this point, pull left point towards (or away from) to try to keep the char width
+
 		    //Once we are within a segment, move the point to be 'on' that segment
 
 		    //Once both points are on segments, determine rotation for the character
