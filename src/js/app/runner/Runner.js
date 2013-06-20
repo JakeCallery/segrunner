@@ -28,6 +28,9 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 	        this.leftPoint = new FootPoint(0,0);
 	        this.rightPoint = new FootPoint(0,0);
 	        this.footVec = new Vec2DObj(0,0,0,0);
+	        this.footVecLength = 0;
+	        this.footVecDist = this.charWidth;
+	        this.footDistThreshold = 3;
 			this.rotation = -10;
 
 	        this.renderSource = new RunnerRenderSource(this.charWidth, this.charHeight, '#FF0000');
@@ -43,13 +46,14 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 	    Runner.prototype.moveTo = function($x,$y){
 			this.leftPoint.x = $x;
 		    this.leftPoint.y = $y;
-		    this.rightPoint.x = $x + this.charWidth;
+		    this.rightPoint.x = $x + this.footVecDist;
 		    this.rightPoint.y = $y;
 		    this.updateFootVec();
 	    };
 
 	    Runner.prototype.updateFootVec = function(){
 			Vec2D.vecFromLineSeg(this.footVec, this.rightPoint.x, this.rightPoint.y, this.leftPoint.x, this.leftPoint.y);
+		    this.footVecLength = Vec2D.lengthOf(this.footVec);
 	    };
 
 	    Runner.prototype.update = function($tickDelta){
@@ -60,6 +64,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 			var i = -1;
 		    var pt = this.rightPoint;
 			var vec = null;
+			var rightSegIndex = -1;
 
 		    //TODO: Refactor this, not very DRY (get it all into 1 loop?)
 		    //Right point
@@ -68,29 +73,54 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 				if(pt.x >= vec.xOffset && pt.x <= (vec.xOffset + vec.x)){
 					//Calc the new 'y' position for the 'foot'
 					this.rightPoint.y = vec.getYOnSegment(this.rightPoint.x);
+					rightSegIndex = i;
 					break;
 				}
 			}
 
 		    //Left point
 		    pt = this.leftPoint;
-		    for(; i >= 0; --i){
-			    vec = this.groundModel.vecList[i];
-			    if(pt.x >= vec.xOffset && pt.x <= (vec.xOffset + vec.x)){
+			var safeCount = 30;
+		    var done = false;
+		    var firstTimeThroughLoop = true;
 
-				    if(this.leftPoint.lastGroundVec !== null && this.leftPoint.lastGroundVec !== vec){
-					    this.leftPoint.lastGroundVec.hasBeenLeft = true;
+		    do{
+			    for(i = rightSegIndex; i >= 0; --i){
+				    vec = this.groundModel.vecList[i];
+				    if(pt.x >= vec.xOffset && pt.x <= (vec.xOffset + vec.x)){
+
+					    if(this.leftPoint.lastGroundVec !== null && this.leftPoint.lastGroundVec !== vec){
+						    this.leftPoint.lastGroundVec.hasBeenLeft = true;
+					    }
+
+					    this.leftPoint.lastGroundVec = vec;
+
+					    //Calc the new 'y' position for the 'foot'
+					    this.leftPoint.y = vec.getYOnSegment(this.leftPoint.x);
+					    break;
 				    }
-
-				    this.leftPoint.lastGroundVec = vec;
-
-				    //Calc the new 'y' position for the 'foot'
-				    this.leftPoint.y = vec.getYOnSegment(this.leftPoint.x);
-				    break;
 			    }
-		    }
 
-		    this.updateFootVec();
+			    //Calc/Cache new foot vector
+			    this.updateFootVec();
+
+			    //brute force along segments until we are back to the right length between right and left points
+				var diff = this.footVecLength - this.footVecDist;
+
+			    if(diff > this.footDistThreshold){
+				    //move x to the right by 1 and start over
+				    pt.x++;
+			    } else if(diff < this.footDistThreshold){
+				    //move x to the left by 1 and start over
+				    pt.x--;
+			    } else {
+				    done = true;
+			    }
+
+			    safeCount--;
+			    firstTimeThroughLoop = false;
+		    } while(!done && rightSegIndex != -1 && safeCount >=0);
+
 		    //TODO: START HERE:
 		    //At this point, pull left point towards (or away from) to try to keep the char width
 
