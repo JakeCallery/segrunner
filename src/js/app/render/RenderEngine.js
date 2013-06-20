@@ -3,8 +3,11 @@
  * User: Jake
  */
 
-define(['jac/events/EventDispatcher','jac/utils/ObjUtils'],
-function(EventDispatcher,ObjUtils){
+define([
+'jac/events/EventDispatcher',
+'jac/utils/ObjUtils',
+'jac/utils/MathUtils'],
+function(EventDispatcher,ObjUtils,MathUtils){
     return (function(){
         /**
          * Creates a RenderEngine object
@@ -43,7 +46,7 @@ function(EventDispatcher,ObjUtils){
 
 				this.gameCtx.beginPath();
 				this.gameCtx.strokeStyle = '#FF0000';
-				this.gameCtx.arc(vec.xOffset+vec.x, vec.yOffset+vec.y, 5, 0, 2*Math.PI, false);
+				this.gameCtx.arc(vec.xOffset+vec.x, vec.yOffset+vec.y, 3, 0, 2*Math.PI, false);
 				this.gameCtx.stroke();
 				this.gameCtx.closePath();
 
@@ -65,17 +68,29 @@ function(EventDispatcher,ObjUtils){
 
 		    //Render Runner (in this case, just put the render call in the runner, since there is only one of them)
 		    //TMP
+
+		    //Left Foot Point
 		    this.gameCtx.beginPath();
 		    this.gameCtx.strokeStyle = '#FFFF00';
-		    this.gameCtx.arc(this.runner.leftPoint.x, this.runner.leftPoint.y, 3, 0, 2*Math.PI, false);
+		    this.gameCtx.arc(this.runner.leftPoint.x, this.runner.leftPoint.y, 5, 0, 2*Math.PI, false);
 		    this.gameCtx.stroke();
 		    this.gameCtx.closePath();
 
+		    //Right Foot Point
 		    this.gameCtx.beginPath();
 		    this.gameCtx.strokeStyle = '#FFFF00';
-		    this.gameCtx.arc(this.runner.rightPoint.x, this.runner.rightPoint.y, 3, 0, 2*Math.PI, false);
+		    this.gameCtx.arc(this.runner.rightPoint.x, this.runner.rightPoint.y, 5, 0, 2*Math.PI, false);
 		    this.gameCtx.stroke();
 		    this.gameCtx.closePath();
+
+		    //Character
+		    this.gameCtx.save();
+		    this.gameCtx.translate(this.runner.rightPoint.x, this.runner.rightPoint.y);
+		    this.gameCtx.rotate(MathUtils.degToRad(this.runner.rotation));
+		    this.gameCtx.translate(-this.runner.charWidth, -this.runner.charHeight);
+		    this.gameCtx.drawImage(this.runner.renderImg, 0,0);
+		    this.gameCtx.restore();
+
 		    ////////////////////////////
 
 	    };

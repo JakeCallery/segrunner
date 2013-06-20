@@ -6,8 +6,9 @@
 define([
 'jac/events/EventDispatcher',
 'jac/utils/ObjUtils',
-'app/runner/FootPoint'],
-function(EventDispatcher,ObjUtils,FootPoint){
+'app/runner/FootPoint',
+'app/runner/RunnerRenderSource'],
+function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource){
     return (function(){
         /**
          * Creates a Runner object
@@ -19,9 +20,16 @@ function(EventDispatcher,ObjUtils,FootPoint){
             EventDispatcher.call(this);
 
 	        this.charWidth = 20;
+	        this.charHeight = 40;
 	        this.groundModel = $groundModel;
 	        this.leftPoint = new FootPoint(0,0);
 	        this.rightPoint = new FootPoint(0,0);
+			this.rotation = -10;
+
+	        this.renderSource = new RunnerRenderSource(this.charWidth, this.charHeight, '#FF0000');
+	        this.renderSource.init();
+	        this.renderImg = this.renderSource.srcImage;
+
 
         }
         

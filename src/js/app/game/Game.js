@@ -44,6 +44,10 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 	        this.renderEngine = new RenderEngine(this.gameCanvas,this.ground.groundModel,this.runner);
 	        this.runner.moveTo(400,100);
 
+	        //TMP
+	        this.window.runner = this.runner;
+	        ///////////
+
 	        this.updateDelegate = EventUtils.bind(self, self.update);
 
         }
