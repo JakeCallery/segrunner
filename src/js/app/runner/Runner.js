@@ -7,8 +7,11 @@ define([
 'jac/events/EventDispatcher',
 'jac/utils/ObjUtils',
 'app/runner/FootPoint',
-'app/runner/RunnerRenderSource'],
-function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource){
+'app/runner/RunnerRenderSource',
+'jac/math/Vec2D',
+'jac/math/Vec2DObj',
+'jac/utils/MathUtils'],
+function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,MathUtils){
     return (function(){
         /**
          * Creates a Runner object
@@ -24,6 +27,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource){
 	        this.groundModel = $groundModel;
 	        this.leftPoint = new FootPoint(0,0);
 	        this.rightPoint = new FootPoint(0,0);
+	        this.footVec = new Vec2DObj(0,0,0,0);
 			this.rotation = -10;
 
 	        this.renderSource = new RunnerRenderSource(this.charWidth, this.charHeight, '#FF0000');
@@ -41,6 +45,11 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource){
 		    this.leftPoint.y = $y;
 		    this.rightPoint.x = $x + this.charWidth;
 		    this.rightPoint.y = $y;
+		    this.updateFootVec();
+	    };
+
+	    Runner.prototype.updateFootVec = function(){
+			Vec2D.vecFromLineSeg(this.footVec, this.rightPoint.x, this.rightPoint.y, this.leftPoint.x, this.leftPoint.y);
 	    };
 
 	    Runner.prototype.update = function($tickDelta){
@@ -81,12 +90,14 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource){
 			    }
 		    }
 
+		    this.updateFootVec();
 		    //TODO: START HERE:
 		    //At this point, pull left point towards (or away from) to try to keep the char width
 
 		    //Once we are within a segment, move the point to be 'on' that segment
 
 		    //Once both points are on segments, determine rotation for the character
+		    this.rotation = MathUtils.radToDeg(Vec2D.getAngle(this.footVec));
 	    };
 
         //Return constructor

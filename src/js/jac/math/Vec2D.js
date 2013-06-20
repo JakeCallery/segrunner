@@ -122,6 +122,10 @@ function(FastMath, Vec2DObj){
 		    $targetVec2D.yOffset = $y1;
 	    };
 
+	    Vec2D.getAngle = function($vec2D){
+		    return Math.atan2($vec2D.y, $vec2D.x);
+	    };
+
 	    //Return constructor
         return Vec2D;
     })();

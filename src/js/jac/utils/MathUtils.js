@@ -9,6 +9,7 @@ function(){
        var MathUtils = {};
 
 	    MathUtils.PI_OVER_180 = (Math.PI/180);
+	    MathUtils.ONE_EIGHTY_OVER_PI = (180/Math.PI);
 
 	    MathUtils.rgbToHex = function($red, $green, $blue){
 			return MathUtils.toHex($red) + MathUtils.toHex($green) + MathUtils.toHex($blue);
@@ -24,6 +25,10 @@ function(){
 
 	    MathUtils.degToRad = function($degrees){
 			return $degrees * MathUtils.PI_OVER_180;
+	    };
+
+	    MathUtils.radToDeg = function($radians){
+			return $radians * MathUtils.ONE_EIGHTY_OVER_PI;
 	    };
 
 	    MathUtils.rand = function($minVal, $maxVal){

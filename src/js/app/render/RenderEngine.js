@@ -87,7 +87,7 @@ function(EventDispatcher,ObjUtils,MathUtils){
 		    this.gameCtx.save();
 		    this.gameCtx.translate(this.runner.rightPoint.x, this.runner.rightPoint.y);
 		    this.gameCtx.rotate(MathUtils.degToRad(this.runner.rotation));
-		    this.gameCtx.translate(-this.runner.charWidth, -this.runner.charHeight);
+		    //this.gameCtx.translate(-this.runner.charWidth, -this.runner.charHeight);
 		    this.gameCtx.drawImage(this.runner.renderImg, 0,0);
 		    this.gameCtx.restore();
 
