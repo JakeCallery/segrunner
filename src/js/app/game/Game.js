@@ -38,8 +38,8 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 	        this.stats.setMode(0);
 	        this.doc.getElementById('statsDiv').appendChild(this.stats.domElement);
 
-	        this.ground = new Ground(800,this.gameWidth, this.gameHeight);
-	        this.inputManager = new InputManager(this.window, this.doc, this.ground.groundModel, 2);
+	        this.ground = new Ground(400,this.gameWidth, this.gameHeight);
+	        this.inputManager = new InputManager(this.window, this.doc, this.ground.groundModel, 3);
 			this.runner = new Runner(this.ground.groundModel);
 	        this.renderEngine = new RenderEngine(this.gameCanvas,this.ground.groundModel,this.runner);
 	        this.runner.moveTo(400,100);

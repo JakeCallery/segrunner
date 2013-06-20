@@ -10,8 +10,9 @@ define([
 'app/runner/RunnerRenderSource',
 'jac/math/Vec2D',
 'jac/math/Vec2DObj',
-'jac/utils/MathUtils'],
-function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,MathUtils){
+'jac/utils/MathUtils',
+'jac/logger/Logger'],
+function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,MathUtils,L){
     return (function(){
         /**
          * Creates a Runner object
@@ -30,7 +31,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 	        this.footVec = new Vec2DObj(0,0,0,0);
 	        this.footVecLength = 0;
 	        this.footVecDist = this.charWidth;
-	        this.footDistThreshold = 3;
+	        this.footDistThreshold = 2;
 			this.rotation = -10;
 
 	        this.renderSource = new RunnerRenderSource(this.charWidth, this.charHeight, '#FF0000');
@@ -80,9 +81,12 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 
 		    //Left point
 		    pt = this.leftPoint;
-			var safeCount = 30;
+			var safeCount = 100;
 		    var done = false;
-		    var firstTimeThroughLoop = true;
+		    var overCount = 0;
+		    var underCount = 0;
+		    var biggestDiff = 0;
+			var smallestDiff = 0;
 
 		    do{
 			    for(i = rightSegIndex; i >= 0; --i){
@@ -110,21 +114,27 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 			    if(diff > this.footDistThreshold){
 				    //move x to the right by 1 and start over
 				    pt.x++;
-			    } else if(diff < this.footDistThreshold){
-				    //move x to the left by 1 and start over
-				    pt.x--;
+				    overCount++;
+				    if(diff > biggestDiff){biggestDiff = diff;}//tmp
+			    } else if(diff < 0){
+				    if(Math.abs(diff) < this.footDistThreshold){
+					    done = true;
+				    } else {
+					    //move x to the left by 1 and start over
+					    pt.x--;
+					    underCount++;
+					    if(diff < smallestDiff){smallestDiff = diff;}//tmp
+				    }
 			    } else {
 				    done = true;
 			    }
 
 			    safeCount--;
-			    firstTimeThroughLoop = false;
+
+			    if(safeCount <= 0){
+				    //L.warn('HIT SAFE COUNT: ' + overCount + '/' + underCount + '----' + biggestDiff + '/' + smallestDiff );
+			    }
 		    } while(!done && rightSegIndex != -1 && safeCount >=0);
-
-		    //TODO: START HERE:
-		    //At this point, pull left point towards (or away from) to try to keep the char width
-
-		    //Once we are within a segment, move the point to be 'on' that segment
 
 		    //Once both points are on segments, determine rotation for the character
 		    this.rotation = MathUtils.radToDeg(Vec2D.getAngle(this.footVec));
