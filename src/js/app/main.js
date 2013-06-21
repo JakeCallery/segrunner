@@ -3,6 +3,12 @@
  * User: Jake
  */
 
+//TODO: NEXT
+// vary the speed of the character based on the incline, eg:
+// if the incline is -90 (straight up and down) the character is moved left by the amount the ground was moved left for that frame
+// if the incline is 0 (flat) the character stays in the same 'x' space
+// if the incline is aiming down speed up
+
 define([
 'jac/logger/Logger',
 'jac/logger/ConsoleTarget',

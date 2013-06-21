@@ -29,6 +29,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 	        this.leftPoint = new FootPoint(0,0);
 	        this.rightPoint = new FootPoint(0,0);
 	        this.footVec = new Vec2DObj(0,0,0,0);
+	        this.flippedFootVec = new Vec2DObj(0,0,0,0);
 	        this.footVecLength = 0;
 	        this.footVecDist = this.charWidth;
 	        this.footDistThreshold = 2;
@@ -37,7 +38,6 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 	        this.renderSource = new RunnerRenderSource(this.charWidth, this.charHeight, '#FF0000');
 	        this.renderSource.init();
 	        this.renderImg = this.renderSource.srcImage;
-
 
         }
         
@@ -66,8 +66,17 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 		    var pt = this.rightPoint;
 			var vec = null;
 			var rightSegIndex = -1;
+		    Vec2D.vecFromLineSeg(this.flippedFootVec, this.leftPoint.x, this.leftPoint.y, this.rightPoint.x, this.rightPoint.y);
+			var footVecAngle = Vec2D.getAngle(this.flippedFootVec);
+		    footVecAngle = MathUtils.radToDeg(footVecAngle);
 
-		    //TODO: Refactor this, not very DRY (get it all into 1 loop?)
+		    //Take last foot vector angle, and adjust forward/backward speed based on that
+		    var speedPercent = footVecAngle / 90;
+		    var pixAdjustment = (this.groundModel.pixPerTick * speedPercent);
+		    this.leftPoint.x += pixAdjustment;
+		    this.rightPoint.x += pixAdjustment;
+		    //L.log('Adjustment: ' + footVecAngle + '/' + pixAdjustment,'@runner');
+
 		    //Right point
 			for(i = this.groundModel.vecList.length-1; i >= 0; --i){
 				vec = this.groundModel.vecList[i];
@@ -129,11 +138,14 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 				    done = true;
 			    }
 
+			    //Prevent any issues with fractional oscillation
 			    safeCount--;
 
+			    /*
 			    if(safeCount <= 0){
-				    //L.warn('HIT SAFE COUNT: ' + overCount + '/' + underCount + '----' + biggestDiff + '/' + smallestDiff );
+				    L.warn('HIT SAFE COUNT: ' + overCount + '/' + underCount + '----' + biggestDiff + '/' + smallestDiff );
 			    }
+			    */
 		    } while(!done && rightSegIndex != -1 && safeCount >=0);
 
 		    //Once both points are on segments, determine rotation for the character

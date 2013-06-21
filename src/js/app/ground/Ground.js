@@ -18,11 +18,9 @@ function(EventDispatcher,ObjUtils,GroundModel){
             //super
             EventDispatcher.call(this);
 
-	        this.pixPerSec = $pixelsPerSec;
-	        this.pixPerTic = $pixelsPerSec/60;
 	        this.gameWidth = $gameWidth;
 	        this.gameHeight = $gameHeight;
-	        this.groundModel = new GroundModel($gameWidth, $gameHeight);
+	        this.groundModel = new GroundModel($gameWidth, $gameHeight, $pixelsPerSec);
 	        this.vecList = this.groundModel.vecList;
         }
         
@@ -30,7 +28,7 @@ function(EventDispatcher,ObjUtils,GroundModel){
         ObjUtils.inheritPrototype(Ground,EventDispatcher);
 
 	    Ground.prototype.update = function($tickDelta){
-		    var offset = -($tickDelta * this.pixPerTic);
+		    var offset = -($tickDelta * this.groundModel.pixPerTick);
 		    var vec = null;
 
 		    for(var i = 0, l = this.vecList.length; i < l; i++){

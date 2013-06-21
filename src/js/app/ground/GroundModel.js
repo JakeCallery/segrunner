@@ -18,7 +18,7 @@ function(EventDispatcher,ObjUtils,L,Pool,GroundVec,Vec2D,Point){
          * @extends {EventDispatcher}
          * @constructor
          */
-        function GroundModel($gameWidth,$gameHeight){
+        function GroundModel($gameWidth,$gameHeight,$pixPerSec){
             //super
             EventDispatcher.call(this);
 
@@ -26,7 +26,8 @@ function(EventDispatcher,ObjUtils,L,Pool,GroundVec,Vec2D,Point){
 	        this.gameHeight = $gameHeight;
 	        this.vecPool = new Pool(GroundVec);
 	        this.vecList = [];
-
+			this.pixPerSec = $pixPerSec;
+	        this.pixPerTick = this.pixPerSec/60;
 	        this.activePoint = new Point(0,0);
 
 	        this.addNextPoint(100,this.gameHeight-100);

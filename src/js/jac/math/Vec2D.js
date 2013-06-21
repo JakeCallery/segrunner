@@ -64,6 +64,10 @@ function(FastMath, Vec2DObj){
 		    $vec2D.y = $vec2D.y / len;
 	    };
 
+	    Vec2D.copy = function($srcVec2D, $targetVec2D){
+
+	    };
+
 	    Vec2D.duplicate = function($vec2D){
 		    return new Vec2DObj($vec2D.x, $vec2D.y, $vec2D.xOffset, $vec2D.yOffset);
 	    };
