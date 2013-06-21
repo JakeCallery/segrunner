@@ -34,6 +34,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 	        this.footVecDist = this.charWidth;
 	        this.footDistThreshold = 2;
 			this.rotation = -10;
+			this.gameCenterX = Math.round(this.groundModel.gameWidth/2);
 
 	        this.renderSource = new RunnerRenderSource(this.charWidth, this.charHeight, '#FF0000');
 	        this.renderSource.init();
@@ -58,24 +59,36 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 	    };
 
 	    Runner.prototype.update = function($tickDelta){
-			var lpVec = null;
-		    var rpVec = null;
-
 			//Walk the segments backwards and see if each point is within the segment
 			var i = -1;
 		    var pt = this.rightPoint;
 			var vec = null;
 			var rightSegIndex = -1;
+
+		    //Foot/Character angles
 		    Vec2D.vecFromLineSeg(this.flippedFootVec, this.leftPoint.x, this.leftPoint.y, this.rightPoint.x, this.rightPoint.y);
 			var footVecAngle = Vec2D.getAngle(this.flippedFootVec);
 		    footVecAngle = MathUtils.radToDeg(footVecAngle);
 
 		    //Take last foot vector angle, and adjust forward/backward speed based on that
-		    var speedPercent = footVecAngle / 90;
-		    var pixAdjustment = (this.groundModel.pixPerTick * speedPercent);
-		    this.leftPoint.x += pixAdjustment;
-		    this.rightPoint.x += pixAdjustment;
-		    //L.log('Adjustment: ' + footVecAngle + '/' + pixAdjustment,'@runner');
+		    var speedPercent = footVecAngle / 90 * 0.7;
+		    var pixAdjustPerAngle = (this.groundModel.pixPerTick * speedPercent);
+		    this.leftPoint.x += pixAdjustPerAngle;
+		    this.rightPoint.x += pixAdjustPerAngle;
+		    //L.log('Adjustment: ' + footVecAngle + '/' + pixAdjustPerAngle,'@runner');
+
+		    //Run faster/slower on flat to catch up to center
+		    if(Math.abs(footVecAngle) < 5){
+			    //adjust to head towards center
+			    var distToCenter = this.gameCenterX - this.rightPoint.x;
+			    var maxAdjust = 5;
+			    var pixAdjustForCatchUp = maxAdjust * (distToCenter/this.gameCenterX);
+			    if(this.rightPoint.x < this.gameCenterX){
+				    this.rightPoint.x += pixAdjustForCatchUp;
+				    this.leftPoint.x += pixAdjustForCatchUp;
+			    }
+		    }
+
 
 		    //Right point
 			for(i = this.groundModel.vecList.length-1; i >= 0; --i){
