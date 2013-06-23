@@ -14,15 +14,22 @@ define([
 'jac/logger/ConsoleTarget',
 'jac/polyfills/RequestAnimationFrame',
 'app/game/Game',
-'jac/utils/EventUtils'],
-function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils){
+'jac/utils/EventUtils',
+'preloadjs',
+'app/resources/Resources'],
+function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils,preloadjs,Resources){
 	L.addLogTarget(new ConsoleTarget());
 	L.log('New Main!', '@main');
 
-	var gameCanvas = document.getElementById('gameCanvas');
-	var game = new Game(document, window, gameCanvas,gameCanvas.width,gameCanvas.height);
+	var handleResourceLoadComplete = function($e){
+		L.log('Resource Loaded: ', '@loading');
+		var sheet = loadQueue.getResult('runnerSheet');
+		resources.addResource('runnerSheet', sheet);
 
-	game.update();
+		//Kick off game:
+		//game.update();
+	};
+	//game.update();
 
 	var stepButtonEl = document.getElementById('stepButton');
 	EventUtils.addDomListener(stepButtonEl, 'click', function(e){
@@ -38,5 +45,13 @@ function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils){
 	EventUtils.addDomListener(stopButtonEl, 'click', function(e){
 		game.pause();
 	});
+
+
+	var resources = new Resources();
+	var loadQueue = new createjs.LoadQueue();
+	loadQueue.loadFile({id:'runnerSheet', src:'resources/runnerSheet.png'});
+	loadQueue.addEventListener('complete', handleResourceLoadComplete);
+	var gameCanvas = document.getElementById('gameCanvas');
+	var game = new Game(document, window, gameCanvas,gameCanvas.width,gameCanvas.height);
 
 });
