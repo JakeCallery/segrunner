@@ -9,7 +9,8 @@
     paths: {
         requireLib: 'libs/require',
 	    json2: 'libs/json2',
-	    stats: 'libs/stats'
+	    stats: 'libs/stats',
+	    preloadjs:'libs/preloadjs-0.3.1.min'
     },
 	shim: {
 		json2: {
@@ -17,6 +18,9 @@
 		},
 		stats: {
 			exports: 'Stats'
+		},
+		'preloadjs': {
+			exports: 'createjs.PreloadJS'
 		}
 	},
     include: 'requireLib'
