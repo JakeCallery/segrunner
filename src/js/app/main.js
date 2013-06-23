@@ -22,12 +22,11 @@ function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils,preloadjs,Resourc
 	L.log('New Main!', '@main');
 
 	var handleResourceLoadComplete = function($e){
-		L.log('Resource Loaded: ', '@loading');
-		var sheet = loadQueue.getResult('runnerSheet');
-		resources.addResource('runnerSheet', sheet);
+		L.log('Resource Load Complete: ', '@resource');
+		var sheet = resources.getResource($e.data);
 
 		//Kick off game:
-		//game.update();
+		game.update();
 	};
 	//game.update();
 
@@ -47,10 +46,12 @@ function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils,preloadjs,Resourc
 	});
 
 
+	//Load up resources
 	var resources = new Resources();
-	var loadQueue = new createjs.LoadQueue();
-	loadQueue.loadFile({id:'runnerSheet', src:'resources/runnerSheet.png'});
-	loadQueue.addEventListener('complete', handleResourceLoadComplete);
+	resources.addHandler('fileLoaded',handleResourceLoadComplete);
+	resources.loadResource('runnerSheet','resources/runnerSheet.png');
+
+	//set up game bits
 	var gameCanvas = document.getElementById('gameCanvas');
 	var game = new Game(document, window, gameCanvas,gameCanvas.width,gameCanvas.height);
 
