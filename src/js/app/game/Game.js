@@ -12,8 +12,9 @@ define([
 'jac/logger/Logger',
 'app/ground/Ground',
 'app/input/InputManager',
-'app/runner/Runner'],
-function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputManager,Runner){
+'app/runner/Runner',
+'app/resources/Resources'],
+function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputManager,Runner,Resources){
     return (function(){
         /**
          * Creates a Game object
@@ -25,6 +26,8 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
             EventDispatcher.call(this);
 
 	        var self = this;
+
+	        var res = new Resources();
 
 	        this.doc = $doc;
 	        this.window = $window;
@@ -40,7 +43,7 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 
 	        this.ground = new Ground(400,this.gameWidth, this.gameHeight);
 	        this.inputManager = new InputManager(this.window, this.doc, this.ground.groundModel, 3);
-			this.runner = new Runner(this.ground.groundModel);
+			this.runner = new Runner(this.ground.groundModel, res.getResource('runnerSheet'));
 	        this.renderEngine = new RenderEngine(this.gameCanvas,this.ground.groundModel,this.runner);
 	        this.runner.moveTo(400,100);
 

@@ -4,10 +4,8 @@
  */
 
 //TODO: NEXT
-// vary the speed of the character based on the incline, eg:
-// if the incline is -90 (straight up and down) the character is moved left by the amount the ground was moved left for that frame
-// if the incline is 0 (flat) the character stays in the same 'x' space
-// if the incline is aiming down speed up
+// SpriteSheet management
+// Cull dead segments
 
 define([
 'jac/logger/Logger',
@@ -21,9 +19,15 @@ function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils,preloadjs,Resourc
 	L.addLogTarget(new ConsoleTarget());
 	L.log('New Main!', '@main');
 
+	var game,gameCanvas;
+
 	var handleResourceLoadComplete = function($e){
 		L.log('Resource Load Complete: ', '@resource');
 		var sheet = resources.getResource($e.data);
+
+		//set up game bits
+		gameCanvas = document.getElementById('gameCanvas');
+		game = new Game(document, window, gameCanvas,gameCanvas.width,gameCanvas.height);
 
 		//Kick off game:
 		game.update();
@@ -50,9 +54,5 @@ function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils,preloadjs,Resourc
 	var resources = new Resources();
 	resources.addHandler('fileLoaded',handleResourceLoadComplete);
 	resources.loadResource('runnerSheet','resources/runnerSheet.png');
-
-	//set up game bits
-	var gameCanvas = document.getElementById('gameCanvas');
-	var game = new Game(document, window, gameCanvas,gameCanvas.width,gameCanvas.height);
 
 });

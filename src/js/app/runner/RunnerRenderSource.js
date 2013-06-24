@@ -11,14 +11,21 @@ function(BitmapRenderSource,ObjUtils){
          * @extends {BitmapRenderSource}
          * @constructor
          */
-        function RunnerRenderSource($width,$height,$color){
+        function RunnerRenderSource($width,$height,$runnerSheetImg){
             //super
-            BitmapRenderSource.call(this,$width,$height,$color);
+            BitmapRenderSource.call(this,$width,$height,'#000000');
+
+	        this.runnerSheetImg = $runnerSheetImg;
+
         }
         
         //Inherit / Extend
         ObjUtils.inheritPrototype(RunnerRenderSource,BitmapRenderSource);
-        
+
+	    RunnerRenderSource.prototype.init = function(){
+			this.srcImage = this.runnerSheetImg;
+	    };
+
         //Return constructor
         return RunnerRenderSource;
     })();

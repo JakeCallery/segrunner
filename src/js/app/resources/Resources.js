@@ -28,7 +28,7 @@ function(L,preloadjs,EventUtils,JacEvent,EventDispatcher,ObjUtils){
 
 	        var handleFileLoad = function($e){
 		        L.log('Resources caught fileLoad event', '@resource');
-		        self.addResource($e.item.id, $e.item.result);
+		        self.addResource($e.item.id, $e.result);
 
 		        self.dispatchEvent(new JacEvent('fileLoaded',$e.item.id));
 	        };

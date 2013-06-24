@@ -86,9 +86,9 @@ function(EventDispatcher,ObjUtils,MathUtils){
 		    //Character
 		    this.gameCtx.save();
 		    this.gameCtx.translate(this.runner.rightPoint.x, this.runner.rightPoint.y);
-		    this.gameCtx.rotate(MathUtils.degToRad(this.runner.rotation));
-		    //this.gameCtx.translate(-this.runner.charWidth, -this.runner.charHeight);
-		    this.gameCtx.drawImage(this.runner.renderImg, 0,0);
+		    this.gameCtx.rotate(MathUtils.degToRad(this.runner.rotation + 180));
+		    //this.gameCtx.translate(-this.runner.charWidth, -this.runner.charHeight); //Hack the right position back in
+		    this.runner.renderCharacter(this.gameCtx);
 		    this.gameCtx.restore();
 
 		    ////////////////////////////

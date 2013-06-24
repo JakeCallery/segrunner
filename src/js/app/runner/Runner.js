@@ -11,34 +11,49 @@ define([
 'jac/math/Vec2D',
 'jac/math/Vec2DObj',
 'jac/utils/MathUtils',
-'jac/logger/Logger'],
-function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,MathUtils,L){
+'jac/logger/Logger',
+'jac/geometry/Rectangle',
+'jac/sprite/PlayDirection',
+'jac/sprite/LoopStyle',
+'jac/sprite/SpriteSheet',
+'jac/sprite/SpriteSequence'],
+function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
+         Vec2D,Vec2DObj,MathUtils,L,Rectangle,PlayDirection,LoopStyle,
+		 SpriteSheet,SpriteSequence){
     return (function(){
         /**
          * Creates a Runner object
          * @extends {EventDispatcher}
          * @constructor
          */
-        function Runner($groundModel){
+        function Runner($groundModel,$sheetImg){
             //super
             EventDispatcher.call(this);
 
-	        this.charWidth = 20;
-	        this.charHeight = 40;
+	        this.charWidth = 64;
+	        this.charHeight = 64;
 	        this.groundModel = $groundModel;
 	        this.leftPoint = new FootPoint(0,0);
 	        this.rightPoint = new FootPoint(0,0);
 	        this.footVec = new Vec2DObj(0,0,0,0);
 	        this.flippedFootVec = new Vec2DObj(0,0,0,0);
 	        this.footVecLength = 0;
-	        this.footVecDist = this.charWidth;
+	        this.footVecDist = this.charWidth/2;
 	        this.footDistThreshold = 2;
 			this.rotation = -10;
 			this.gameCenterX = Math.round(this.groundModel.gameWidth/2);
 
-	        this.renderSource = new RunnerRenderSource(this.charWidth, this.charHeight, '#FF0000');
-	        this.renderSource.init();
-	        this.renderImg = this.renderSource.srcImage;
+	        this.sheetImg = $sheetImg;
+	        //this.renderSource = new RunnerRenderSource(this.charWidth, this.charHeight, this.sheetImg);
+	        //this.renderSource.init();
+
+	        this.spriteSheet = new SpriteSheet(this.sheetImg,64,64,16,16,'runner');
+	        this.runSequence = new SpriteSequence(this.spriteSheet,'run',0,10,3,PlayDirection.FORWARD,LoopStyle.LOOP);
+
+	        this.renderImg = this.sheetImg;
+	        this.renderFrameRect = new Rectangle(0,0,this.charWidth,this.charHeight);
+
+	        this.currentSeq = this.runSequence;
 
         }
         
@@ -56,6 +71,12 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 	    Runner.prototype.updateFootVec = function(){
 			Vec2D.vecFromLineSeg(this.footVec, this.rightPoint.x, this.rightPoint.y, this.leftPoint.x, this.leftPoint.y);
 		    this.footVecLength = Vec2D.lengthOf(this.footVec);
+	    };
+
+	    Runner.prototype.renderCharacter = function($ctx){
+		    var rect = this.currentSeq.currentCellRect;
+		    $ctx.drawImage(this.renderImg, rect.x,rect.y,
+			    rect.width, rect.height,-this.charWidth,-this.charHeight,this.charWidth,this.charHeight);
 	    };
 
 	    Runner.prototype.update = function($tickDelta){
@@ -163,6 +184,9 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,Vec2D,Vec2DObj,Ma
 
 		    //Once both points are on segments, determine rotation for the character
 		    this.rotation = MathUtils.radToDeg(Vec2D.getAngle(this.footVec));
+
+		    //Update the sprite sequence here:
+		    this.currentSeq.update($tickDelta);
 	    };
 
         //Return constructor
