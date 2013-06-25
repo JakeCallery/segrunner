@@ -54,7 +54,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 	        this.runSequence = new SpriteSequence(this.spriteSheet,'run',0,10,3,PlayDirection.FORWARD,LoopStyle.LOOP);
 			this.slideSequence = new SpriteSequence(this.spriteSheet,'slide',10,3,3,PlayDirection.FORWARD,LoopStyle.STOP);
 			this.jumpSequence = new SpriteSequence(this.spriteSheet,'jump',12,8,3,PlayDirection.FORWARD,LoopStyle.ONCE);
-			this.respawnSequence = new SpriteSequence(this.spriteSheet,'respawn',21,8,PlayDirection.FORWARD,LoopStyle.STOP);
+			this.respawnSequence = new SpriteSequence(this.spriteSheet,'respawn',21,8,PlayDirection.FORWARD,LoopStyle.ONCE);
 			this.sequenceManager = new SequenceManager();
 
 	        this.renderImg = this.sheetImg;
