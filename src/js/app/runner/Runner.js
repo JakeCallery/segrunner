@@ -40,6 +40,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 	        this.footVecLength = 0;
 	        this.footVecDist = this.charWidth/2;
 	        this.footDistThreshold = 2;
+	        this.footVecAngleHistory = [];
 			this.rotation = -10;
 			this.gameCenterX = Math.round(this.groundModel.gameWidth/2);
 
@@ -92,6 +93,8 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 		    Vec2D.vecFromLineSeg(this.flippedFootVec, this.leftPoint.x, this.leftPoint.y, this.rightPoint.x, this.rightPoint.y);
 			var footVecAngle = Vec2D.getAngle(this.flippedFootVec);
 		    footVecAngle = MathUtils.radToDeg(footVecAngle);
+
+		    this.updateFootVecAngleHistory(footVecAngle);
 
 		    //Take last foot vector angle, and adjust forward/backward speed based on that
 		    var speedPercent = footVecAngle / 90 * 0.7;
@@ -188,7 +191,9 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 		    this.rotation = MathUtils.radToDeg(Vec2D.getAngle(this.footVec));
 
 		    var sequenceChanged = false;
-		    if(this.rotation > -170 && this.rotation < 0){
+			var avgAngle = this.getAvgFootVecAngleHistory();
+		   // L.log('AvgAngle: ' + avgAngle, '@runner');
+		    if(avgAngle > 25){
 			    //change sequence to slide
 			    sequenceChanged = this.changeSequence(this.slideSequence);
 		    } else {
@@ -213,6 +218,23 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 			    sequenceChanged = true;
 		    }
 		    return sequenceChanged;
+	    };
+
+	    Runner.prototype.updateFootVecAngleHistory = function($newAngle){
+		    this.footVecAngleHistory.push($newAngle);
+		    if(this.footVecAngleHistory.length > 4){
+			    this.footVecAngleHistory.shift();
+		    }
+	    };
+
+	    Runner.prototype.getAvgFootVecAngleHistory = function(){
+		    var avg = 0;
+			var len = this.footVecAngleHistory.length;
+		    for(var i = 0; i < len; i++){
+				avg += this.footVecAngleHistory[i];
+		    }
+
+		    return avg / len;
 	    };
 
         //Return constructor
