@@ -4,8 +4,13 @@
  */
 
 //TODO: NEXT
-// SpriteSheet management
 // Cull dead segments
+// SpriteSheet management
+//  - Implement sequence chaining (for old seq -> transition out -> transition in -> new looping seq)
+//  - Implement Sequence Queue, or manager or something like that
+// Parallax backgrounds
+// Final Art style
+
 
 define([
 'jac/logger/Logger',

@@ -49,6 +49,8 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 
 	        this.spriteSheet = new SpriteSheet(this.sheetImg,64,64,16,16,'runner');
 	        this.runSequence = new SpriteSequence(this.spriteSheet,'run',0,10,3,PlayDirection.FORWARD,LoopStyle.LOOP);
+			this.slideSequence = new SpriteSequence(this.spriteSheet,'slide',10,3,3,PlayDirection.FORWARD,LoopStyle.STOP);
+			this.jumpSequence = new SpriteSequence(this.spriteSheet,'jump',13,5,3,PlayDirection.FORWARD,LoopStyle.STOP);
 
 	        this.renderImg = this.sheetImg;
 	        this.renderFrameRect = new Rectangle(0,0,this.charWidth,this.charHeight);
@@ -185,8 +187,32 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 		    //Once both points are on segments, determine rotation for the character
 		    this.rotation = MathUtils.radToDeg(Vec2D.getAngle(this.footVec));
 
+		    var sequenceChanged = false;
+		    if(this.rotation > -170 && this.rotation < 0){
+			    //change sequence to slide
+			    sequenceChanged = this.changeSequence(this.slideSequence);
+		    } else {
+			    //chance sequence to run
+			    sequenceChanged = this.changeSequence(this.runSequence);
+		    }
+
 		    //Update the sprite sequence here:
-		    this.currentSeq.update($tickDelta);
+		    if(sequenceChanged === false){
+			    this.currentSeq.update($tickDelta);
+		    }
+
+	    };
+
+	    Runner.prototype.changeSequence = function($newSeq, $doReset){
+		    if($doReset === undefined){$doReset = true;}
+		    var sequenceChanged = false;
+		    if(this.currentSeq.id !== $newSeq.id){
+			    //update
+			    this.currentSeq = $newSeq;
+			    if($doReset === true){this.currentSeq.reset();}
+			    sequenceChanged = true;
+		    }
+		    return sequenceChanged;
 	    };
 
         //Return constructor
