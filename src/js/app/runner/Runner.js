@@ -198,7 +198,11 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 		    } while(!done && rightSegIndex != -1 && safeCount >=0);
 
 		    //Once both points are on segments, determine rotation for the character
-		    this.rotation = MathUtils.radToDeg(Vec2D.getAngle(this.footVec));
+		    if(this.sequenceManager.getCurrentSequence().id === 'jump'){
+			    this.rotation = 0;
+		    } else {
+			    this.rotation = MathUtils.radToDeg(Vec2D.getAngle(this.footVec));
+		    }
 
 		    //Handle sprite animation sequence selection
 		    var sequenceChanged = false;
