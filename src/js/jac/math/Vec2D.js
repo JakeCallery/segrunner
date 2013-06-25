@@ -65,7 +65,10 @@ function(FastMath, Vec2DObj){
 	    };
 
 	    Vec2D.copy = function($srcVec2D, $targetVec2D){
-
+			$targetVec2D.x = $srcVec2D.x;
+			$targetVec2D.y = $srcVec2D.y;
+			$targetVec2D.xOffset = $srcVec2D.xOffset;
+			$targetVec2D.yOffset = $srcVec2D.yOffset;
 	    };
 
 	    Vec2D.duplicate = function($vec2D){
@@ -128,6 +131,12 @@ function(FastMath, Vec2DObj){
 
 	    Vec2D.getAngle = function($vec2D){
 		    return Math.atan2($vec2D.y, $vec2D.x);
+	    };
+
+	    Vec2D.angleBetween = function($vec2Da, $vec2Db){
+		    var dot = Vec2D.dot($vec2Da,$vec2Db);
+		    dot = dot / (Vec2D.lengthOf($vec2Da) * Vec2D.lengthOf($vec2Db));
+		    return Math.acos(dot);
 	    };
 
 	    //Return constructor

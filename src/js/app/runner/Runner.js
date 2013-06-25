@@ -38,6 +38,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 	        this.rightPoint = new FootPoint(0,0);
 	        this.footVec = new Vec2DObj(0,0,0,0);
 	        this.flippedFootVec = new Vec2DObj(0,0,0,0);
+	        this.tmpVec = new Vec2DObj(0,0,0,0);
 	        this.footVecLength = 0;
 	        this.footVecDist = this.charWidth/2;
 	        this.footDistThreshold = 2;
@@ -52,7 +53,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 	        this.spriteSheet = new SpriteSheet(this.sheetImg,64,64,16,16,'runner');
 	        this.runSequence = new SpriteSequence(this.spriteSheet,'run',0,10,3,PlayDirection.FORWARD,LoopStyle.LOOP);
 			this.slideSequence = new SpriteSequence(this.spriteSheet,'slide',10,3,3,PlayDirection.FORWARD,LoopStyle.STOP);
-			this.jumpSequence = new SpriteSequence(this.spriteSheet,'jump',13,8,3,PlayDirection.FORWARD,LoopStyle.STOP);
+			this.jumpSequence = new SpriteSequence(this.spriteSheet,'jump',12,8,3,PlayDirection.FORWARD,LoopStyle.ONCE);
 			this.respawnSequence = new SpriteSequence(this.spriteSheet,'respawn',21,8,PlayDirection.FORWARD,LoopStyle.STOP);
 			this.sequenceManager = new SequenceManager();
 
@@ -132,10 +133,13 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 
 		    //Plant foot points on the line based on X location
 		    //Right point
+		    var rightPointSeg = null;
+		    var leftPointSeg = null;
 			for(i = this.groundModel.vecList.length-1; i >= 0; --i){
 				vec = this.groundModel.vecList[i];
 				if(pt.x >= vec.xOffset && pt.x <= (vec.xOffset + vec.x)){
 					//Calc the new 'y' position for the 'foot'
+					rightPointSeg = this.groundModel.vecList[i];
 					this.rightPoint.y = vec.getYOnSegment(this.rightPoint.x);
 					rightSegIndex = i;
 					break;
@@ -165,6 +169,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 
 					    //Calc the new 'y' position for the 'foot'
 					    this.leftPoint.y = vec.getYOnSegment(this.leftPoint.x);
+					    leftPointSeg = this.groundModel.vecList[i];
 					    break;
 				    }
 			    }
@@ -197,9 +202,24 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 
 		    } while(!done && rightSegIndex != -1 && safeCount >=0);
 
+		    //Determine if we need to jump or not
+		    if(leftPointSeg !== rightPointSeg && leftPointSeg !== null && rightPointSeg !== null && leftPointSeg !== undefined && rightPointSeg !== undefined){
+			    //subtract vectors and see if we have an extreme angle
+			    var tmpAng = MathUtils.radToDeg(Vec2D.angleBetween(rightPointSeg,leftPointSeg));
+			    //L.log('Tmp Angle: ' + tmpAng, '@runner');
+			    if(tmpAng > 45){
+				    //jump
+				    if(this.sequenceManager.getCurrentSequence() !== this.jumpSequence){
+					    this.sequenceManager.replaceAll(this.jumpSequence);
+					    L.log('jump', '@runner');
+				    }
+			    }
+
+		    }
+
 		    //Once both points are on segments, determine rotation for the character
 		    if(this.sequenceManager.getCurrentSequence().id === 'jump'){
-			    this.rotation = 0;
+			    this.rotation = 180;
 		    } else {
 			    this.rotation = MathUtils.radToDeg(Vec2D.getAngle(this.footVec));
 		    }
@@ -231,6 +251,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 				    //wait for jump to finish, then switch
 				    this.sequenceManager.replaceNext($newSeq);
 				    this.sequenceManager.nextAfterComplete();
+				    //L.log('changed next sequence to ' + $newSeq.id)
 			    } else {
 				    //immediate switch
 				    this.sequenceManager.replaceAll($newSeq);

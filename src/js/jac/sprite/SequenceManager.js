@@ -8,8 +8,9 @@ define([
 'jac/utils/ObjUtils',
 'jac/sprite/LoopStyle',
 'jac/utils/EventUtils',
-'jac/logger/Logger'],
-function(EventDispatcher,ObjUtils,LoopStyle,EventUtils,L){
+'jac/logger/Logger',
+'jac/sprite/events/SequenceEvent'],
+function(EventDispatcher,ObjUtils,LoopStyle,EventUtils,L,SequenceEvent){
     return (function(){
         /**
          * Creates a SequenceManager object
@@ -35,7 +36,7 @@ function(EventDispatcher,ObjUtils,LoopStyle,EventUtils,L){
 	    };
 
 	    SequenceManager.prototype.handleSequenceComplete = function($e){
-		    L.log('Caught Sequence Complete', '@sequence');
+		    //L.log('Caught Sequence Complete: ' + $e.data.id, '@sequence');
 			this.nextSequence();
 	    };
 

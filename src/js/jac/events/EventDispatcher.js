@@ -84,7 +84,12 @@ define(['jac/events/JacEvent'], function (JacEvent) {
 			if(this.handlers[$event.type] instanceof Array){
 				var handlersForType = this.handlers[$event.type];
 				for(var i = 0, len = handlersForType.length; i < len; i++){
-					handlersForType[i]($event);
+					if(handlersForType.length > i){
+						handlersForType[i]($event);
+					} else {
+						break;
+					}
+
 				}
 			}
 

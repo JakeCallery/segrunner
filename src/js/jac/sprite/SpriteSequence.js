@@ -97,6 +97,7 @@ function(EventDispatcher,ObjUtils,Rectangle,LoopStyle,PlayDirection,SequenceEven
 			if(this.loopStyle === LoopStyle.ONCE){
 				this.playDirection = PlayDirection.STOPPED;
 				this.dispatchEvent(new SequenceEvent(SequenceEvent.COMPLETE,self));
+				this.reset();
 
 			} else if(this.loopStyle === LoopStyle.LOOP){
 				if(this.playDirection === PlayDirection.FORWARD){
