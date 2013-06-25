@@ -94,14 +94,25 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 			var footVecAngle = Vec2D.getAngle(this.flippedFootVec);
 		    footVecAngle = MathUtils.radToDeg(footVecAngle);
 
+		    //set up averages for angles (smooth out sequence changes)
 		    this.updateFootVecAngleHistory(footVecAngle);
 
-		    //Take last foot vector angle, and adjust forward/backward speed based on that
-		    var speedPercent = footVecAngle / 90 * 0.7;
-		    var pixAdjustPerAngle = (this.groundModel.pixPerTick * speedPercent);
-		    this.leftPoint.x += pixAdjustPerAngle;
-		    this.rightPoint.x += pixAdjustPerAngle;
-		    //L.log('Adjustment: ' + footVecAngle + '/' + pixAdjustPerAngle,'@runner');
+		    //Update forward speed based on foot angle
+		    var speedPercent = footVecAngle / 90;
+		    var pixAdjustPerAngle = -Math.abs(this.groundModel.pixPerTick * speedPercent);
+		    var fineAdjustment = 1;
+		    if(footVecAngle > 0){
+			    //downhill
+			    fineAdjustment = 0.6;
+		    } else if(footVecAngle > 0){
+			    //uphill
+			    fineAdjustment = 0.7;
+		    }
+
+		    //Final Foot X placement
+		    this.leftPoint.x += pixAdjustPerAngle * fineAdjustment;
+		    this.rightPoint.x += pixAdjustPerAngle * fineAdjustment;
+		   // L.log('Adjustment: ' + footVecAngle + '/' + pixAdjustPerAngle,'@runner');
 
 		    //Run faster/slower on flat to catch up to center
 		    if(Math.abs(footVecAngle) < 5){
@@ -116,6 +127,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 		    }
 
 
+		    //Plant foot points on the line based on X location
 		    //Right point
 			for(i = this.groundModel.vecList.length-1; i >= 0; --i){
 				vec = this.groundModel.vecList[i];
@@ -136,6 +148,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 		    var biggestDiff = 0;
 			var smallestDiff = 0;
 
+		    //Locate the segment this foot point is on, and generate the Y values based on X
 		    do{
 			    for(i = rightSegIndex; i >= 0; --i){
 				    vec = this.groundModel.vecList[i];
@@ -158,7 +171,6 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 
 			    //brute force along segments until we are back to the right length between right and left points
 				var diff = this.footVecLength - this.footVecDist;
-
 			    if(diff > this.footDistThreshold){
 				    //move x to the right by 1 and start over
 				    pt.x++;
@@ -180,24 +192,17 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 			    //Prevent any issues with fractional oscillation
 			    safeCount--;
 
-			    /*
-			    if(safeCount <= 0){
-				    L.warn('HIT SAFE COUNT: ' + overCount + '/' + underCount + '----' + biggestDiff + '/' + smallestDiff );
-			    }
-			    */
 		    } while(!done && rightSegIndex != -1 && safeCount >=0);
 
 		    //Once both points are on segments, determine rotation for the character
 		    this.rotation = MathUtils.radToDeg(Vec2D.getAngle(this.footVec));
 
+		    //Handle sprite animation sequence selection
 		    var sequenceChanged = false;
 			var avgAngle = this.getAvgFootVecAngleHistory();
-		   // L.log('AvgAngle: ' + avgAngle, '@runner');
 		    if(avgAngle > 25){
-			    //change sequence to slide
 			    sequenceChanged = this.changeSequence(this.slideSequence);
 		    } else {
-			    //chance sequence to run
 			    sequenceChanged = this.changeSequence(this.runSequence);
 		    }
 
@@ -222,7 +227,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 
 	    Runner.prototype.updateFootVecAngleHistory = function($newAngle){
 		    this.footVecAngleHistory.push($newAngle);
-		    if(this.footVecAngleHistory.length > 4){
+		    if(this.footVecAngleHistory.length > 3){
 			    this.footVecAngleHistory.shift();
 		    }
 	    };
