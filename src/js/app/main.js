@@ -4,6 +4,7 @@
  */
 
 //TODO: NEXT
+// Jumping
 // Cull dead segments
 // SpriteSheet management
 //  - Implement sequence chaining (for old seq -> transition out -> transition in -> new looping seq)

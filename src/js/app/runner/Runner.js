@@ -16,10 +16,11 @@ define([
 'jac/sprite/PlayDirection',
 'jac/sprite/LoopStyle',
 'jac/sprite/SpriteSheet',
-'jac/sprite/SpriteSequence'],
+'jac/sprite/SpriteSequence',
+'jac/sprite/SequenceManager'],
 function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
          Vec2D,Vec2DObj,MathUtils,L,Rectangle,PlayDirection,LoopStyle,
-		 SpriteSheet,SpriteSequence){
+		 SpriteSheet,SpriteSequence,SequenceManager){
     return (function(){
         /**
          * Creates a Runner object
@@ -51,12 +52,14 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 	        this.spriteSheet = new SpriteSheet(this.sheetImg,64,64,16,16,'runner');
 	        this.runSequence = new SpriteSequence(this.spriteSheet,'run',0,10,3,PlayDirection.FORWARD,LoopStyle.LOOP);
 			this.slideSequence = new SpriteSequence(this.spriteSheet,'slide',10,3,3,PlayDirection.FORWARD,LoopStyle.STOP);
-			this.jumpSequence = new SpriteSequence(this.spriteSheet,'jump',13,5,3,PlayDirection.FORWARD,LoopStyle.STOP);
+			this.jumpSequence = new SpriteSequence(this.spriteSheet,'jump',13,8,3,PlayDirection.FORWARD,LoopStyle.STOP);
+			this.respawnSequence = new SpriteSequence(this.spriteSheet,'respawn',21,8,PlayDirection.FORWARD,LoopStyle.STOP);
+			this.sequenceManager = new SequenceManager();
 
 	        this.renderImg = this.sheetImg;
 	        this.renderFrameRect = new Rectangle(0,0,this.charWidth,this.charHeight);
 
-	        this.currentSeq = this.runSequence;
+	        this.sequenceManager.replaceAll(this.runSequence);
 
         }
         
@@ -77,7 +80,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 	    };
 
 	    Runner.prototype.renderCharacter = function($ctx){
-		    var rect = this.currentSeq.currentCellRect;
+		    var rect = this.sequenceManager.getCurrentSequence().currentCellRect;
 		    $ctx.drawImage(this.renderImg, rect.x,rect.y,
 			    rect.width, rect.height,-this.charWidth,-this.charHeight,this.charWidth,this.charHeight);
 	    };
@@ -175,7 +178,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 				    //move x to the right by 1 and start over
 				    pt.x++;
 				    overCount++;
-				    if(diff > biggestDiff){biggestDiff = diff;}//tmp
+				    if(diff > biggestDiff){biggestDiff = diff;}//tmp (used for debugging)
 			    } else if(diff < 0){
 				    if(Math.abs(diff) < this.footDistThreshold){
 					    done = true;
@@ -183,7 +186,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 					    //move x to the left by 1 and start over
 					    pt.x--;
 					    underCount++;
-					    if(diff < smallestDiff){smallestDiff = diff;}//tmp
+					    if(diff < smallestDiff){smallestDiff = diff;}//tmp (used for debugging)
 				    }
 			    } else {
 				    done = true;
@@ -208,7 +211,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 
 		    //Update the sprite sequence here:
 		    if(sequenceChanged === false){
-			    this.currentSeq.update($tickDelta);
+			    this.sequenceManager.updateCurrent($tickDelta);
 		    }
 
 	    };
@@ -216,11 +219,20 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 	    Runner.prototype.changeSequence = function($newSeq, $doReset){
 		    if($doReset === undefined){$doReset = true;}
 		    var sequenceChanged = false;
-		    if(this.currentSeq.id !== $newSeq.id){
+		    var currentSeq = this.sequenceManager.getCurrentSequence();
+		    if(currentSeq.id !== $newSeq.id){
+
 			    //update
-			    this.currentSeq = $newSeq;
-			    if($doReset === true){this.currentSeq.reset();}
-			    sequenceChanged = true;
+			    if(currentSeq.id === 'jump'){
+				    //wait for jump to finish, then switch
+				    this.sequenceManager.replaceNext($newSeq);
+				    this.sequenceManager.nextAfterComplete();
+			    } else {
+				    //immediate switch
+				    this.sequenceManager.replaceAll($newSeq);
+				    if($doReset === true){currentSeq.reset();}
+				    sequenceChanged = true;
+			    }
 		    }
 		    return sequenceChanged;
 	    };

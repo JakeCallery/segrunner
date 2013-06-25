@@ -49,6 +49,18 @@ define(['jac/events/JacEvent'], function (JacEvent) {
 		};
 
 		/**
+		 * Removes all handlers from this object
+		 */
+		EventDispatcher.prototype.removeAllHandlers = function(){
+			for(var type in this.handlers){
+				if(this.handlers.hasOwnProperty(type) && this.handlers[type] instanceof Array){
+					//clear
+					this.handlers[type].length = 0;
+				}
+			}
+		};
+
+		/**
 		 * removes all handlers for the specified type
 		 * @param {String} $type
 		 */

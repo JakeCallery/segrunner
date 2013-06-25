@@ -4,16 +4,23 @@
  */
 
 define([
+'jac/events/EventDispatcher',
+'jac/utils/ObjUtils',
 'jac/geometry/Rectangle',
 'jac/sprite/LoopStyle',
-'jac/sprite/PlayDirection'],
-function(Rectangle,LoopStyle,PlayDirection){
+'jac/sprite/PlayDirection',
+'jac/sprite/events/SequenceEvent'],
+function(EventDispatcher,ObjUtils,Rectangle,LoopStyle,PlayDirection,SequenceEvent){
     return (function(){
         /**
          * Creates a SpriteSequence object
+         * @extends {EventDispatcher}
          * @constructor
          */
         function SpriteSequence($spriteSheet,$id,$startFrameIndex,$numFrames,$ticksPerFrame,$playDirection,$loopStyle){
+
+	        //super
+	        EventDispatcher.call(this);
 
 	        this.id = $id;
 	        this.spriteSheet = $spriteSheet;
@@ -31,6 +38,9 @@ function(Rectangle,LoopStyle,PlayDirection){
 	        this.currentCellRect = this.spriteSheet.getCellRectFromIndex(this.startFrameIndex,this.currentCellRect);
 
         }
+
+	    //Inherit / Extend
+	    ObjUtils.inheritPrototype(SpriteSequence,EventDispatcher);
 
 	    SpriteSequence.prototype.update = function($tickDelta){
 		    this.accumulatedTicks += $tickDelta;
@@ -68,7 +78,7 @@ function(Rectangle,LoopStyle,PlayDirection){
 	    /**@private*/
 	    SpriteSequence.prototype.nextFrame = function(){
 			this.currentFrameIndex++;
-
+			var self = this;
 		    if(this.currentFrameIndex >= this.numFrames){
 			    this.handleLoop();
 		    }
@@ -83,18 +93,30 @@ function(Rectangle,LoopStyle,PlayDirection){
 		};
 
 	    SpriteSequence.prototype.handleLoop = function(){
-			if(this.loopStyle === LoopStyle.LOOP){
+		    var self = this;
+			if(this.loopStyle === LoopStyle.ONCE){
+				this.playDirection = PlayDirection.STOPPED;
+				this.dispatchEvent(new SequenceEvent(SequenceEvent.COMPLETE,self));
+
+			} else if(this.loopStyle === LoopStyle.LOOP){
 				if(this.playDirection === PlayDirection.FORWARD){
 					this.currentFrameIndex = 0;
 				} else if(this.playDirection === PlayDirection.BACKWARD){
 					this.currentFrameIndex = this.numFrames - 1;
 				}
+
+				this.dispatchEvent(new SequenceEvent(SequenceEvent.LOOP_COMPLETE,self));
+
 			} else if(this.loopStyle === LoopStyle.STOP) {
 				this.currentFrameIndex = this.numFrames - 1;
 				this.playDirection = PlayDirection.STOPPED;
+				this.dispatchEvent(new SequenceEvent(SequenceEvent.STOPPED,self));
+
 			} else if(this.loopStyle === LoopStyle.RESET){
 				this.currentFrameIndex = 0;
 				this.playDirection = PlayDirection.STOPPED;
+				this.dispatchEvent(new SequenceEvent(SequenceEvent.STOPPED,self));
+
 			} else if(this.loopStyle === LoopStyle.BOUNCE){
 				if(this.playDirection === PlayDirection.FORWARD){
 					if(this.numFrames > 1){
@@ -105,6 +127,8 @@ function(Rectangle,LoopStyle,PlayDirection){
 					this.currentFrameIndex = 0;
 					this.playDirection = PlayDirection.FORWARD
 				}
+
+				this.dispatchEvent(new SequenceEvent(SequenceEvent.LOOP_COMPLETE,self));
 			}
 	    };
 
