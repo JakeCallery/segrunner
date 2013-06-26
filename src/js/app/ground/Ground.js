@@ -35,10 +35,12 @@ function(EventDispatcher,ObjUtils,GroundModel){
 				vec = this.vecList[i];
 			    vec.xOffset += offset;
 		    }
+
+		    this.cullDead();
 	    };
 
 	    Ground.prototype.cullDead = function(){
-		    while(this.vecList.length > 0 && this.vecList[0].xOffset < 0){
+		    while(this.vecList.length > 0 && this.vecList[0].xOffset < -60 && (this.vecList[0].xOffset + this.vecList[0].x) < -60){
 			    this.groundModel.shiftOldPoint();
 		    }
 	    };

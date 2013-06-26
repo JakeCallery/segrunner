@@ -5,7 +5,7 @@
 
 //TODO: NEXT
 // Jumping (REMOVED, maybe try again later)
-// Cull dead segments
+// Sink character into the ground more (move character along Right normal of foot vector)
 // Parallax backgrounds
 // Final Art style
 
@@ -26,7 +26,6 @@ function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils,preloadjs,Resourc
 
 	var handleResourceLoadComplete = function($e){
 		L.log('Resource Load Complete: ', '@resource');
-		var sheet = resources.getResource($e.data);
 
 		//set up game bits
 		gameCanvas = document.getElementById('gameCanvas');

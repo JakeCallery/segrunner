@@ -60,7 +60,7 @@ function(EventDispatcher,ObjUtils,L,Pool,GroundVec,Vec2D,Point){
 	    GroundModel.prototype.shiftOldPoint = function(){
 		    var vec = this.vecList.shift();
 		    this.vecPool.recycle(vec);
-		    L.log('Shifting Old Point: ' + this.vecList.length, '@ground');
+		    //L.log('Shifting Old Point: ' + this.vecList.length, '@ground');
 	    };
 
 	    GroundModel.prototype.getFirstVisibleSeg = function(){
