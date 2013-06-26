@@ -278,7 +278,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 
 	    Runner.prototype.updateFootVecAngleHistory = function($newAngle){
 		    this.footVecAngleHistory.push($newAngle);
-		    if(this.footVecAngleHistory.length > 12){
+		    if(this.footVecAngleHistory.length > 5){
 			    this.footVecAngleHistory.shift();
 		    }
 	    };

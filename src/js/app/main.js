@@ -56,6 +56,7 @@ function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils,preloadjs,Resourc
 	//Load up resources
 	var resources = new Resources();
 	resources.addHandler('fileLoaded',handleResourceLoadComplete);
-	resources.loadResource('runnerSheet','resources/runnerSheet.png');
+	//resources.loadResource('runnerSheet','resources/runnerSheet.png');
+	resources.loadResource('runnerSheet','resources/runnerSheet_black.png');
 
 });

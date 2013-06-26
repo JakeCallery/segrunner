@@ -32,8 +32,12 @@ function(EventDispatcher,ObjUtils,MathUtils){
 	    RenderEngine.prototype.renderFrame = function(){
 
 		    //overwrite canvas with black
+		    var gradient = this.gameCtx.createLinearGradient(0,0,0,this.gameHeight);
+		    gradient.addColorStop(0.0,'#03001c');
+		    gradient.addColorStop(0.1,'#06003f');
+		    gradient.addColorStop(0.7,'#ab4400');
 		    this.gameCtx.beginPath();
-		    this.gameCtx.fillStyle = '#000000';
+		    this.gameCtx.fillStyle = gradient;
 		    this.gameCtx.fillRect(0,0,this.gameWidth,this.gameHeight);
 		    this.gameCtx.fill();
 		    this.gameCtx.closePath();
@@ -42,8 +46,8 @@ function(EventDispatcher,ObjUtils,MathUtils){
 		    //Render segments
 			//TMP
 		    this.gameCtx.beginPath();
-		    this.gameCtx.strokeStyle = '#00FF00';
-		    this.gameCtx.fillStyle = '#FFFFFF';
+		    //this.gameCtx.strokeStyle = '#111111';
+		    this.gameCtx.fillStyle = '#000000';
 
 		    var leftVec = this.groundModel.getFirstVisibleSeg();
 		    var leftVisibleY = leftVec.getYOnSegment(0);
@@ -66,7 +70,7 @@ function(EventDispatcher,ObjUtils,MathUtils){
 		    this.gameCtx.lineTo(0,leftVisibleY);
 
 		    this.gameCtx.fill();
-		    this.gameCtx.stroke();
+		    //this.gameCtx.stroke();
 		    this.gameCtx.closePath();
 		    //////////////////////////////////////
 
