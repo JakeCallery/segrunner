@@ -28,7 +28,7 @@ function(EventDispatcher,ObjUtils,L,Pool,GroundVec,Vec2D,Point){
 	        this.vecList = [];
 			this.pixPerSec = $pixPerSec;
 	        this.pixPerTick = this.pixPerSec/60;
-	        this.activePoint = new Point(0,0);
+	        this.activePoint = new Point($gameWidth*1.2,$gameHeight/2);
 
 	        this.addNextPoint(100,this.gameHeight-100);
 	        this.addNextPoint(200,this.gameHeight-100);

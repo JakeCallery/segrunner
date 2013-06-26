@@ -33,7 +33,7 @@ function(EventDispatcher,ObjUtils,MathUtils){
 
 		    //overwrite canvas with black
 		    var gradient = this.gameCtx.createLinearGradient(0,0,0,this.gameHeight);
-		    gradient.addColorStop(0.0,'#03001c');
+		    //gradient.addColorStop(0.0,'#03001c');
 		    gradient.addColorStop(0.1,'#06003f');
 		    gradient.addColorStop(0.7,'#ab4400');
 		    this.gameCtx.beginPath();
@@ -42,9 +42,7 @@ function(EventDispatcher,ObjUtils,MathUtils){
 		    this.gameCtx.fill();
 		    this.gameCtx.closePath();
 
-
-		    //Render segments
-			//TMP
+		    //Render segments / ground fill
 		    this.gameCtx.beginPath();
 		    //this.gameCtx.strokeStyle = '#111111';
 		    this.gameCtx.fillStyle = '#000000';
@@ -72,7 +70,6 @@ function(EventDispatcher,ObjUtils,MathUtils){
 		    this.gameCtx.fill();
 		    //this.gameCtx.stroke();
 		    this.gameCtx.closePath();
-		    //////////////////////////////////////
 
 		    //Render active point
 		    this.gameCtx.beginPath();
