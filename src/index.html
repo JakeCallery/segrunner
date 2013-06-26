@@ -8,7 +8,7 @@
     <link href="css/main.css" rel="stylesheet"/>
 
     <script>
-        var USE_COMPILED = false;
+        var USE_COMPILED = true;
         var require = {
             baseUrl: './js',
             paths: {
@@ -32,15 +32,24 @@
 
 </head>
 <body>
-    <div id="statsDiv" class="statsDiv"></div>
+    <div id="statsDiv" class="statsDivHidden"></div>
 
-    <div id="gameCanvasDiv">
+    <div class="mainWrapper">
+        <h1 class="mainHeadline">SEGMENT RUNNER</h1>
         <canvas id="gameCanvas" width="728" height="300"></canvas>
-    </div>
 
-    <button id="startButton">Run</button>
-    <button id="stepButton">Step</button>
-    <button id="stopButton">Stop</button>
+        <div id="buttonDiv" class="buttonGroupDiv">
+            <div class="playButtonsDiv">
+                <button id="startButton" class="simpleButton">Run</button>
+                <button id="stepButton" class="simpleButton">Step</button>
+                <button id="stopButton" class="simpleButton">Stop</button>
+            </div>
+            <div class="messageDiv">
+                Move your mouse to change the landscape
+            </div>
+        </div>
+
+    </div>
 
     <script type="text/javascript">
         //Async load RequireJS
@@ -60,6 +69,22 @@
             var firstTag = document.getElementsByTagName('script')[0];
             firstTag.parentNode.insertBefore(sel,firstTag);
         })();
+    </script>
+
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-40588826-1']);
+        _gaq.push(['_setDomainName', 'subvoicestudios.com']);
+        _gaq.push(['_setAllowLinker', true]);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
     </script>
 
 </body>
