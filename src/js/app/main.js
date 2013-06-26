@@ -16,12 +16,25 @@ define([
 'app/game/Game',
 'jac/utils/EventUtils',
 'preloadjs',
-'app/resources/Resources'],
-function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils,preloadjs,Resources){
+'app/resources/Resources',
+'app/config/AppConfig',
+'jac/utils/BrowserUtils'],
+function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils,preloadjs,Resources,AppConfig,BrowserUtils){
 	L.addLogTarget(new ConsoleTarget());
 	L.log('New Main!', '@main');
 
 	var game,gameCanvas;
+
+	var appConfig = new AppConfig();
+
+	//Grab params
+	var params = BrowserUtils.getURLParams(window);
+
+	if(params.hasOwnProperty('debug')){
+		appConfig.isDebugging = !!(params['debug'] === 'true');
+	}
+
+	L.log('App Debug: ' + appConfig.isDebugging, '@main');
 
 	var handleResourceLoadComplete = function($e){
 		L.log('Resource Load Complete: ', '@resource');

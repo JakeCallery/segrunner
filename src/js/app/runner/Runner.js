@@ -41,7 +41,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 	        this.tmpVec = new Vec2DObj(0,0,0,0);
 	        this.tmpVec2 = new Vec2DObj(0,0,0,0);
 	        this.footVecLength = 0;
-	        this.footVecDist = this.charWidth/2;
+	        this.footVecDist = this.charWidth/4;
 	        this.footDistThreshold = 2;
 	        this.footVecAngleHistory = [];
 			this.rotation = -10;
