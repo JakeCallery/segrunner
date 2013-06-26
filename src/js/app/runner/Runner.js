@@ -39,6 +39,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 	        this.footVec = new Vec2DObj(0,0,0,0);
 	        this.flippedFootVec = new Vec2DObj(0,0,0,0);
 	        this.tmpVec = new Vec2DObj(0,0,0,0);
+	        this.tmpVec2 = new Vec2DObj(0,0,0,0);
 	        this.footVecLength = 0;
 	        this.footVecDist = this.charWidth/2;
 	        this.footDistThreshold = 2;
@@ -237,6 +238,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 		    } else {
 			    this.rotation = MathUtils.radToDeg(Vec2D.getAngle(this.footVec));
 		    }
+
 
 		    //Handle sprite animation sequence selection
 		    var sequenceChanged = false;

@@ -6,8 +6,9 @@
 define([
 'jac/events/EventDispatcher',
 'jac/utils/ObjUtils',
-'jac/utils/MathUtils'],
-function(EventDispatcher,ObjUtils,MathUtils){
+'jac/utils/MathUtils',
+'jac/math/Vec2D'],
+function(EventDispatcher,ObjUtils,MathUtils,Vec2D){
     return (function(){
         /**
          * Creates a RenderEngine object
@@ -98,8 +99,16 @@ function(EventDispatcher,ObjUtils,MathUtils){
 		    ////////////////////////////
 
 		    //Character
+
+		    //'sink' character into ground further
+		    Vec2D.calcRightNormal(this.runner.tmpVec2, this.runner.flippedFootVec);
+		    Vec2D.normalize(this.runner.tmpVec2);
+		    Vec2D.multScalar(this.runner.tmpVec2,2);
+		    var rightRenderX = this.runner.rightPoint.x + this.runner.tmpVec2.x;
+		    var rightRenderY = this.runner.rightPoint.y += this.runner.tmpVec2.y;
+
 		    this.gameCtx.save();
-		    this.gameCtx.translate(this.runner.rightPoint.x, this.runner.rightPoint.y);
+		    this.gameCtx.translate(rightRenderX, rightRenderY);
 		    this.gameCtx.rotate(MathUtils.degToRad(this.runner.rotation + 180));
 		    //this.gameCtx.translate(-this.runner.charWidth, -this.runner.charHeight); //Hack the right position back in
 		    this.runner.renderCharacter(this.gameCtx);
