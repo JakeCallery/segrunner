@@ -50,6 +50,9 @@ function(L,ConsoleTarget,RequestAnimationFrame,Game,EventUtils,preloadjs,Resourc
 
 	var stepButtonEl = document.getElementById('stepButton');
 	EventUtils.addDomListener(stepButtonEl, 'click', function(e){
+		if(game.isRunning){
+			game.pause();
+		}
 		game.update(true);
 	});
 

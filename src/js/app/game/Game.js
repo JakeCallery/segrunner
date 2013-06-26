@@ -13,8 +13,9 @@ define([
 'app/ground/Ground',
 'app/input/InputManager',
 'app/runner/Runner',
-'app/resources/Resources'],
-function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputManager,Runner,Resources){
+'app/resources/Resources',
+'app/config/AppConfig'],
+function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputManager,Runner,Resources,AppConfig){
     return (function(){
         /**
          * Creates a Game object
@@ -28,6 +29,7 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 	        var self = this;
 
 	        var res = new Resources();
+			var appConfig = new AppConfig();
 
 	        this.doc = $doc;
 	        this.window = $window;
@@ -35,21 +37,22 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 	        this.gameContext = $gameCanvas.getContext('2d');
 	        this.gameWidth = $gameWidth;
 	        this.gameHeight = $gameHeight;
+			this.isRunning = false;
 
 	        this.updateId = -1;
 	        this.stats = new Stats();
 	        this.stats.setMode(0);
 	        this.doc.getElementById('statsDiv').appendChild(this.stats.domElement);
 
+	        if(appConfig.isDebugging === true){
+		        this.doc.getElementById('statsDiv').className = 'statsDiv';
+	        }
+
 	        this.ground = new Ground(400,this.gameWidth, this.gameHeight);
 	        this.inputManager = new InputManager(this.window, this.doc, this.ground.groundModel, 3);
 			this.runner = new Runner(this.ground.groundModel, res.getResource('runnerSheet'));
 	        this.renderEngine = new RenderEngine(this.gameCanvas,this.ground.groundModel,this.runner);
 	        this.runner.moveTo(400,100);
-
-	        //TMP
-	        this.window.runner = this.runner;
-	        ///////////
 
 	        this.updateDelegate = EventUtils.bind(self, self.update);
 
@@ -64,6 +67,7 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 
 		    if($isManualUpdate !== true){
 			    this.updateId = this.window.requestAnimationFrame(self.updateDelegate);
+			    this.isRunning = true;
 		    }
 
 		    this.inputManager.update(1);
@@ -76,6 +80,7 @@ function(EventDispatcher,ObjUtils,Stats,EventUtils,RenderEngine,L,Ground,InputMa
 
 	    Game.prototype.pause = function(){
 		    this.window.cancelAnimationFrame(this.updateId);
+		    this.isRunning = false;
 	    };
 
         //Return constructor
