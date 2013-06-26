@@ -53,8 +53,8 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 	        this.spriteSheet = new SpriteSheet(this.sheetImg,64,64,16,16,'runner');
 	        this.runSequence = new SpriteSequence(this.spriteSheet,'run',0,10,3,PlayDirection.FORWARD,LoopStyle.LOOP);
 			this.slideSequence = new SpriteSequence(this.spriteSheet,'slide',10,3,3,PlayDirection.FORWARD,LoopStyle.STOP);
-			this.jumpSequence = new SpriteSequence(this.spriteSheet,'jump',12,8,3,PlayDirection.FORWARD,LoopStyle.ONCE);
-			this.respawnSequence = new SpriteSequence(this.spriteSheet,'respawn',21,8,PlayDirection.FORWARD,LoopStyle.ONCE);
+			//this.jumpSequence = new SpriteSequence(this.spriteSheet,'jump',12,8,3,PlayDirection.FORWARD,LoopStyle.ONCE);
+			this.respawnSequence = new SpriteSequence(this.spriteSheet,'respawn',21,8,3,PlayDirection.FORWARD,LoopStyle.ONCE);
 			this.sequenceManager = new SequenceManager();
 
 	        this.renderImg = this.sheetImg;
@@ -103,9 +103,11 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 
 		    //Update forward speed based on foot angle
 		    var speedPercent = footVecAngle / 90;
-		    var pixAdjustPerAngle = -Math.abs(this.groundModel.pixPerTick * speedPercent);
 		    var fineAdjustment = 1;
-		    if(footVecAngle > 0){
+		    if(this.sequenceManager.getCurrentSequence().id === 'respawn'){
+			    speedPercent = 1.0;
+			    fineAdjustment = 1.0;
+		    } else if(footVecAngle > 0){
 			    //downhill
 			    fineAdjustment = 0.6;
 		    } else if(footVecAngle > 0){
@@ -113,10 +115,21 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 			    fineAdjustment = 0.7;
 		    }
 
+		    var pixAdjustPerAngle = -Math.abs(this.groundModel.pixPerTick * speedPercent);
+
 		    //Final Foot X placement
 		    this.leftPoint.x += pixAdjustPerAngle * fineAdjustment;
 		    this.rightPoint.x += pixAdjustPerAngle * fineAdjustment;
-		   // L.log('Adjustment: ' + footVecAngle + '/' + pixAdjustPerAngle,'@runner');
+
+		    if(this.rightPoint.x < -30){
+			    //RESPAWN
+			    L.log('Do Respawn', '@runner');
+			    this.sequenceManager.replaceAll(this.respawnSequence);
+			    this.rightPoint.x = this.groundModel.gameWidth * 0.9;
+			    this.rightPoint.y = 0;
+			    this.leftPoint.x = this.rightPoint.x - this.footVecDist;
+			    this.leftPoint.y = 0;
+		    }
 
 		    //Run faster/slower on flat to catch up to center
 		    if(Math.abs(footVecAngle) < 5){
@@ -206,7 +219,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 		    if(leftPointSeg !== rightPointSeg && leftPointSeg !== null && rightPointSeg !== null && leftPointSeg !== undefined && rightPointSeg !== undefined){
 			    //subtract vectors and see if we have an extreme angle
 			    var tmpAng = MathUtils.radToDeg(Vec2D.angleBetween(rightPointSeg,leftPointSeg));
-			    //L.log('Tmp Angle: ' + tmpAng, '@runner');
+			    /*
 			    if(tmpAng > 45){
 				    //jump
 				    if(this.sequenceManager.getCurrentSequence() !== this.jumpSequence){
@@ -214,6 +227,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 					    L.log('jump', '@runner');
 				    }
 			    }
+			    */
 
 		    }
 
@@ -247,7 +261,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 		    if(currentSeq.id !== $newSeq.id){
 
 			    //update
-			    if(currentSeq.id === 'jump'){
+			    if(currentSeq.id === 'jump' || currentSeq.id === 'respawn'){
 				    //wait for jump to finish, then switch
 				    this.sequenceManager.replaceNext($newSeq);
 				    this.sequenceManager.nextAfterComplete();
@@ -264,7 +278,7 @@ function(EventDispatcher,ObjUtils,FootPoint,RunnerRenderSource,
 
 	    Runner.prototype.updateFootVecAngleHistory = function($newAngle){
 		    this.footVecAngleHistory.push($newAngle);
-		    if(this.footVecAngleHistory.length > 3){
+		    if(this.footVecAngleHistory.length > 12){
 			    this.footVecAngleHistory.shift();
 		    }
 	    };
