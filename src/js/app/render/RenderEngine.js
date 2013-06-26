@@ -41,27 +41,39 @@ function(EventDispatcher,ObjUtils,MathUtils){
 
 		    //Render segments
 			//TMP
+		    this.gameCtx.beginPath();
+		    this.gameCtx.strokeStyle = '#00FF00';
+		    this.gameCtx.fillStyle = '#FFFFFF';
+
+		    var leftVec = this.groundModel.getFirstVisibleSeg();
+		    var leftVisibleY = leftVec.getYOnSegment(0);
+		    this.gameCtx.moveTo(0, leftVisibleY);
+
 			for(var i = 0, l = this.groundModel.vecList.length; i < l; i++){
 				var vec = this.groundModel.vecList[i];
 
-				this.gameCtx.beginPath();
-				this.gameCtx.strokeStyle = '#FF0000';
-				this.gameCtx.arc(vec.xOffset+vec.x, vec.yOffset+vec.y, 3, 0, 2*Math.PI, false);
-				this.gameCtx.stroke();
-				this.gameCtx.closePath();
-
-				this.gameCtx.beginPath();
-				this.gameCtx.strokeStyle = '#00FF00';
-				this.gameCtx.moveTo(vec.xOffset, vec.yOffset);
+//				this.gameCtx.beginPath();
+//				this.gameCtx.strokeStyle = '#FF0000';
+//				this.gameCtx.arc(vec.xOffset+vec.x, vec.yOffset+vec.y, 3, 0, 2*Math.PI, false);
+//				this.gameCtx.stroke();
+//				this.gameCtx.closePath();
 				this.gameCtx.lineTo(vec.xOffset + vec.x, vec.yOffset + vec.y);
-				this.gameCtx.stroke();
-				this.gameCtx.closePath();
 			}
+
+		    //Close path
+		    this.gameCtx.lineTo(this.gameWidth, this.gameHeight);
+		    this.gameCtx.lineTo(0,this.gameHeight);
+		    this.gameCtx.lineTo(0,leftVisibleY);
+
+		    this.gameCtx.fill();
+		    this.gameCtx.stroke();
+		    this.gameCtx.closePath();
 		    //////////////////////////////////////
 
 		    //Render active point
 		    this.gameCtx.beginPath();
-		    this.gameCtx.strokeStyle = '#0000FF';
+		    //this.gameCtx.strokeStyle = '#41A2ED';
+		    this.gameCtx.strokeStyle = '#222222';
 		    this.gameCtx.arc(this.groundModel.activePoint.x, this.groundModel.activePoint.y, 8, 0, 2*Math.PI, false);
 		    this.gameCtx.stroke();
 		    this.gameCtx.closePath();
@@ -70,18 +82,19 @@ function(EventDispatcher,ObjUtils,MathUtils){
 		    //TMP
 
 		    //Left Foot Point
-		    this.gameCtx.beginPath();
-		    this.gameCtx.strokeStyle = '#FFFF00';
-		    this.gameCtx.arc(this.runner.leftPoint.x, this.runner.leftPoint.y, 5, 0, 2*Math.PI, false);
-		    this.gameCtx.stroke();
-		    this.gameCtx.closePath();
+//		    this.gameCtx.beginPath();
+//		    this.gameCtx.strokeStyle = '#FFFF00';
+//		    this.gameCtx.arc(this.runner.leftPoint.x, this.runner.leftPoint.y, 5, 0, 2*Math.PI, false);
+//		    this.gameCtx.stroke();
+//		    this.gameCtx.closePath();
 
 		    //Right Foot Point
-		    this.gameCtx.beginPath();
-		    this.gameCtx.strokeStyle = '#FFFF00';
-		    this.gameCtx.arc(this.runner.rightPoint.x, this.runner.rightPoint.y, 5, 0, 2*Math.PI, false);
-		    this.gameCtx.stroke();
-		    this.gameCtx.closePath();
+//		    this.gameCtx.beginPath();
+//		    this.gameCtx.strokeStyle = '#FFFF00';
+//		    this.gameCtx.arc(this.runner.rightPoint.x, this.runner.rightPoint.y, 5, 0, 2*Math.PI, false);
+//		    this.gameCtx.stroke();
+//		    this.gameCtx.closePath();
+		    ////////////////////////////
 
 		    //Character
 		    this.gameCtx.save();
@@ -90,8 +103,6 @@ function(EventDispatcher,ObjUtils,MathUtils){
 		    //this.gameCtx.translate(-this.runner.charWidth, -this.runner.charHeight); //Hack the right position back in
 		    this.runner.renderCharacter(this.gameCtx);
 		    this.gameCtx.restore();
-
-		    ////////////////////////////
 
 	    };
 

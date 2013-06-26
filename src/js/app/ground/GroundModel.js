@@ -63,6 +63,17 @@ function(EventDispatcher,ObjUtils,L,Pool,GroundVec,Vec2D,Point){
 		    L.log('Shifting Old Point: ' + this.vecList.length, '@ground');
 	    };
 
+	    GroundModel.prototype.getFirstVisibleSeg = function(){
+		    for(var i = 0, l = this.vecList.length; i < l; i++){
+		        var vec = this.vecList[i];
+			    if(Math.floor(vec.xOffset) <= 0 && Math.floor(vec.xOffset + vec.x) >= 0){
+			        return this.vecList[i];
+			    }
+		    }
+
+		    return null;
+	    };
+
         //Return constructor
         return GroundModel;
     })();

@@ -58,7 +58,7 @@ function(EventDispatcher,ObjUtils,L,EventUtils,BrowserUtils){
 		    //L.log('Viewport: ' + viewportRect.x + ',' + viewportRect.y + ',' + viewportRect.width + ',' + viewportRect.height, '@mouse');
 
 		    //var canvasX = this.groundModel.gameWidth * (mouseX / viewportRect.width);
-		    var canvasX = this.groundModel.gameWidth * 1.0;
+		    var canvasX = this.groundModel.gameWidth * 1.2;
 		    var canvasY = this.groundModel.gameHeight * (mouseY / viewportRect.height);
 		    this.groundModel.activePoint.x = canvasX;
 		    this.groundModel.activePoint.y = canvasY;
